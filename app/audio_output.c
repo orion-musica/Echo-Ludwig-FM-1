@@ -88,7 +88,7 @@ FM1_AUDIO_CODE void fm1_output_mix(int32_t *output)
 {
     if (!output) return;
 #if ECHO_LUDWIG
-    echo_audio_render(output, FM1_BLOCK_FRAMES);   /* game synth + LUDWIG voice */
+    if (echo_ludwig_active) echo_audio_render(output, FM1_BLOCK_FRAMES);   /* game synth + LUDWIG voice */
 #endif
     if (fm1_fx[0] | fm1_fx[1] | fm1_cut[0] | fm1_cut[1]) live_fx(output);
     unsigned target = fm1_engine_output_level();

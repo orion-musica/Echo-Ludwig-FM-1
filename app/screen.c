@@ -1628,7 +1628,7 @@ static void toggle_step(unsigned step)
 void groove_screen_init(void)
 {
 #if ECHO_LUDWIG
-    echo_fm1_init(); return;
+    if (echo_ludwig_active) { echo_fm1_init(); return; }
 #endif
     track = cursor = drum = writing = fm_group = op = 0;
     hlv_init();
@@ -2467,7 +2467,7 @@ controls_done:
 void groove_screen_control(void)
 {
 #if ECHO_LUDWIG
-    echo_fm1_control(); return;
+    if (echo_ludwig_active) { echo_fm1_control(); return; }
 #endif
     struct fm1_controls controls;
     fm1_controls_read(&controls);

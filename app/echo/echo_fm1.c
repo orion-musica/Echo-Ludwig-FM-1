@@ -21,6 +21,7 @@ int groove_master_update(unsigned adc); /* engine: MASTER knob -> output level *
  * 3310 / factory projects in that slot are overwritten: back it up first. */
 #define ECHO_SAVE_OFFSET (14u * FM1_FLASH_SECTOR_BYTES)
 
+volatile uint8_t echo_ludwig_active = 1;
 static uint16_t band[FM1_SCREEN_WIDTH * 8];
 static unsigned shown_serial = ~0u;
 static uint8_t cleared;
