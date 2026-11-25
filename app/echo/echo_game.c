@@ -157,8 +157,8 @@ static unsigned total_stars(void)
     for (unsigned i = 0; i < ECHO_MELODIES; ++i) s += sv.stars[i];
     return s;
 }
-static const char *const rank_say[5] = {"bedroom dj", "warm up dj", "club resident", "headliner", "main stage legend"};
-static const char *const rank_show[5] = {"BEDROOM DJ", "WARM-UP DJ", "CLUB RESIDENT", "HEADLINER", "MAIN STAGE LEGEND"};
+static const char *const rank_say[5] = {"beginner", "apprentice", "musician", "soloist", "maestro"};
+static const char *const rank_show[5] = {"BEGINNER", "APPRENTICE", "MUSICIAN", "SOLOIST", "MAESTRO"};
 static unsigned rank_of(unsigned stars)
 {
     return stars >= 65 ? 4 : stars >= 40 ? 3 : stars >= 20 ? 2 : stars >= 8 ? 1 : 0;

@@ -11,7 +11,7 @@ the screen stays black with one small white message for sighted helpers.
 4. Every round the melody grows by one or two notes. Play it all to unlock the record and hear the **drop**.
 
 Stars: 3 = no mistakes and no hints, 2 = up to 2 mistakes, 1 = finished.
-Three records in a crate open the next crate. Ranks: Bedroom DJ, Warm-up DJ, Club Resident, Headliner, Main Stage Legend.
+Three records in a crate open the next crate. Ranks: Beginner, Apprentice, Musician, Soloist, Maestro.
 
 ## Controls
 

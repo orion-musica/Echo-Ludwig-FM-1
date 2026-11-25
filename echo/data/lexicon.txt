@@ -315,3 +315,8 @@ fun F AH1 N
 page P EY1 JH
 tab T AE1 B
 enter EH1 N T ER0
+beginner B IH0 G IH1 N ER0
+apprentice AX P R EH1 N T IH0 S
+musician M Y UW0 Z IH1 SH AX N
+soloist S OW1 L OW0 IH0 S T
+maestro M AY1 S T R OW0
