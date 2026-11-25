@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Put the browser builds into the GitHub Pages site (docs/).
-  echo/site/landing.template.html + ludwig_voice.wasm -> docs/index.html
-  echo/prototype/index.html                          -> docs/play/index.html"""
+"""Build the GitHub Pages site (docs/) from echo/site: every page shares
+site.css, the navigation, the display options and the footer.
+  landing.template.html + ludwig_voice.wasm -> docs/index.html
+  play.template.html    + echo.wasm         -> docs/play/index.html
+  install.template.html                     -> docs/install/index.html
+(docs/install/flasher.html is the official FM1 Open installer, made by the build.)"""
 import base64, json, os, shutil
 ECHO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(os.path.dirname(ECHO), 'docs')
@@ -48,14 +51,38 @@ def hero():
     return ''.join(o)
 
 
-t = open(os.path.join(ECHO, 'site', 'landing.template.html'), encoding='utf-8').read()
-t = t.replace('%%HERO%%', hero()).replace('%%VOICE_WASM%%', voice).replace('%%INTRO%%', json.dumps(intro))
-os.makedirs(os.path.join(DOCS, 'play'), exist_ok=True)
-open(os.path.join(DOCS, 'index.html'), 'w', encoding='utf-8').write(t)
-shutil.copyfile(os.path.join(ECHO, 'prototype', 'index.html'), os.path.join(DOCS, 'play', 'index.html'))
+SITE = os.path.join(ECHO, 'site')
+def part(name): return open(os.path.join(SITE, name), encoding='utf-8').read()
+CSS, HEAD, OPTS, PREFS, NAV, FOOT = (part(n) for n in ('site.css', 'prefs_head.html', 'display_options.html', 'prefs.js', 'nav.html', 'footer.html'))
+game_wasm = base64.b64encode(open(os.path.join(ECHO, 'prototype', 'echo.wasm'), 'rb').read()).decode()
+
+
+def page(template, current, root, extra):
+    t = part(template)
+    nav = NAV
+    for name in ('home', 'play', 'install'):
+        nav = nav.replace('%%C_' + name + '%%', ' aria-current="page"' if name == current else '')
+    t = (t.replace('%%NAV%%', nav).replace('%%FOOTER%%', FOOT).replace('%%DISPLAY_OPTIONS%%', OPTS)
+          .replace('%%PREFS_HEAD%%', HEAD).replace('%%CSS%%', CSS).replace('%%PREFS_JS%%', PREFS)
+          .replace('%%R%%', root))
+    for key, value in extra.items():
+        t = t.replace(key, value)
+    assert '%%' not in t, template + ': unfilled placeholder'
+    return t
+
+
+def write(rel, text):
+    path = os.path.join(DOCS, rel)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    open(path, 'w', encoding='utf-8').write(text)
+
+
+write('index.html', page('landing.template.html', 'home', '', {'%%HERO%%': hero(), '%%VOICE_WASM%%': voice, '%%INTRO%%': json.dumps(intro)}))
+write('play/index.html', page('play.template.html', 'play', '../', {'%%WASM%%': game_wasm}))
+write('install/index.html', page('install.template.html', 'install', '../', {}))
 shots = os.path.join(DOCS, 'assets', 'screens')
 os.makedirs(shots, exist_ok=True)
-for name in os.listdir(os.path.join(ECHO, 'site', 'screens')):
+for name in os.listdir(os.path.join(SITE, 'screens')):
     if name.endswith('.png'):
-        shutil.copyfile(os.path.join(ECHO, 'site', 'screens', name), os.path.join(shots, name))
-print('docs/index.html and docs/play/index.html written')
+        shutil.copyfile(os.path.join(SITE, 'screens', name), os.path.join(shots, name))
+print('docs/index.html, docs/play/index.html and docs/install/index.html written')

@@ -1,0 +1,8 @@
+<script>
+/* Apply saved display choices before the page paints (no flash of the wrong theme). */
+try { const s = JSON.parse(localStorage.getItem('echo-site') || '{}');
+  const h = document.documentElement;
+  if (s.theme) h.classList.replace('t-auto', 't-' + s.theme);
+  if (s.size) h.classList.replace('s-1', 's-' + s.size);
+  if (s.wide) h.classList.add('wide'); } catch (e) {}
+</script>

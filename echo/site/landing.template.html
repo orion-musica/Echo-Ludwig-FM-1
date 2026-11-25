@@ -9,97 +9,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<script>
-/* Apply saved display choices before the page paints (no flash of the wrong theme). */
-try { const s = JSON.parse(localStorage.getItem('echo-site') || '{}');
-  const h = document.documentElement;
-  if (s.theme) h.classList.replace('t-auto', 't-' + s.theme);
-  if (s.size) h.classList.replace('s-1', 's-' + s.size);
-  if (s.wide) h.classList.add('wide'); } catch (e) {}
-</script>
+%%PREFS_HEAD%%
 <style>
-/* VOICE: calm, plain, spoken first. IDEA: the FM-1's black screen with one small white message.
-   PICTURE: that screen, drawn large. COLOUR: black and white; one focus yellow that is never decoration.
-   TYPE: Atkinson Hyperlegible (made by the Braille Institute for low vision). LAYOUT: one reading column. */
-:root{--bg:#000;--ink:#fff;--quiet:#c8c8c8;--line:#5a5a5a;--focus:#ffd400;--card:#111}
-html.t-light{--bg:#fff;--ink:#000;--quiet:#333;--line:#767676;--focus:#0047ff;--card:#f2f2f2}
-html.t-yellow{--bg:#000;--ink:#ffeb3b;--quiet:#ffe866;--line:#ffeb3b;--focus:#fff;--card:#141400}
-@media (prefers-color-scheme: light){html.t-auto{--bg:#fff;--ink:#000;--quiet:#333;--line:#767676;--focus:#0047ff;--card:#f2f2f2}}
-html.s-1{font-size:112.5%}html.s-2{font-size:150%}html.s-3{font-size:200%}
-*{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',Verdana,Arial,sans-serif;line-height:1.6;overflow-x:clip}
-html.wide body{line-height:2;letter-spacing:.06em;word-spacing:.16em}
-html.wide p,html.wide li{margin-bottom:1.4em}
-a{color:var(--ink);text-decoration-thickness:2px;text-underline-offset:.2em}
-a:hover{text-decoration-thickness:4px}
-:focus-visible{outline:4px solid var(--focus);outline-offset:4px}
-.skip{position:absolute;left:1rem;top:-10rem;background:var(--ink);color:var(--bg);padding:.75rem 1rem;font-weight:700;z-index:10}
-.skip:focus{top:1rem}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.wrap{max-width:46rem;margin:0 auto;padding:0 1.25rem}
-header{border-bottom:2px solid var(--line);padding:1.25rem 0}
-.voice{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
-button,select{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:.5rem;min-height:3rem;padding:.5rem 1rem;cursor:pointer}
-button.primary{background:var(--ink);color:var(--bg);font-weight:700}
-button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-details.opts{margin-top:1rem}
-details.opts summary{cursor:pointer;font-weight:700;min-height:2.75rem;display:flex;align-items:center}
-fieldset{border:2px solid var(--line);border-radius:.5rem;margin:.75rem 0;padding:.5rem 1rem 1rem}
-legend{font-weight:700;padding:0 .4rem}
-.choices{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
-.choices label{display:flex;gap:.5rem;align-items:center;min-height:2.75rem;cursor:pointer}
-input[type=radio],input[type=checkbox]{width:1.4rem;height:1.4rem;accent-color:var(--ink)}
-.caption{margin-top:1rem;border-left:4px solid var(--ink);padding:.25rem 0 .25rem 1rem;font-size:1.15rem;min-height:2.5rem}
-.caption:empty{display:none}
-main{padding:2rem 0 3rem}
-h1{font-size:2.6rem;line-height:1.1;margin:.5rem 0 .75rem}
-h2{font-size:1.6rem;line-height:1.2;margin:3rem 0 .75rem;padding-top:1rem;border-top:2px solid var(--line)}
-h3{font-size:1.2rem;margin:1.5rem 0 .25rem}
-.lead{font-size:1.3rem}
-.screen{display:block;width:100%;max-width:24rem;margin:2rem auto;border:2px solid var(--line);border-radius:1rem;background:#000}
-.toc ul{padding-left:1.25rem}.toc li{margin:.35rem 0}
-table{border-collapse:collapse;width:100%;margin:1rem 0}
-caption{text-align:left;font-weight:700;padding-bottom:.5rem}
-th,td{border:2px solid var(--line);padding:.6rem .75rem;text-align:left;vertical-align:top}
-thead th{background:var(--card)}
-.note{border:3px solid var(--ink);border-radius:.5rem;padding:1rem 1.25rem;margin:1.5rem 0;background:var(--card)}
-.note strong{display:block;margin-bottom:.25rem}
-.big-links{display:flex;flex-wrap:wrap;gap:1rem;margin:1.5rem 0}
-.big-links a{display:inline-flex;align-items:center;min-height:3.25rem;padding:.6rem 1.25rem;border:2px solid var(--ink);border-radius:.5rem;font-weight:700;text-decoration:none}
-.big-links a:hover{background:var(--ink);color:var(--bg)}
-.reading{outline:3px dashed var(--focus);outline-offset:6px;background:var(--card)}
-footer{border-top:2px solid var(--line);padding:2rem 0 3rem;color:var(--quiet)}
-footer a{color:var(--quiet)}
-
-/* ---- pictures ---- */
-.hero{max-width:64rem;margin:0 auto;padding:0 1.25rem}
-.device{display:block;width:100%;height:auto;margin:1.5rem 0 .5rem}
-.device .glow{opacity:0;animation:wave 1.6s ease-out 2 both}
-@keyframes wave{0%{opacity:0}18%{opacity:.95}60%{opacity:0}100%{opacity:0}}
-@media (prefers-reduced-motion:reduce){.device .glow{animation:none;opacity:0}.device .still{opacity:.9}}
-.device-cap{color:var(--quiet);text-align:center;margin:0 0 1rem}
-ol.steps{list-style:none;counter-reset:step;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12.5rem),1fr));gap:1rem}
-ol.steps li{counter-increment:step;background:var(--card);border:2px solid var(--line);border-radius:1rem;padding:1rem 1.1rem;margin:0}
-ol.steps li::before{content:counter(step);display:inline-grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--ink);color:var(--bg);font-weight:700;margin-right:.6rem}
-ol.steps svg{display:block;width:3rem;height:3rem;margin:.6rem 0 .4rem;color:var(--ink)}
-.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:1rem;margin:1.5rem 0}
-.shots figure{margin:0;text-align:center}
-.shots img{display:block;width:100%;aspect-ratio:5/3;image-rendering:pixelated;background:#000;border:2px solid var(--line);border-radius:.75rem}
-.shots figcaption{margin-top:.5rem;color:var(--quiet)}
-.crates{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:1.25rem;margin-top:1.5rem}
-.crate{background:var(--card);border:2px solid var(--line);border-radius:1rem;overflow:hidden}
-.crate svg{display:block;width:100%;height:auto;aspect-ratio:1;background:#000}
-.crate div{padding:.9rem 1rem 1.1rem}.crate h3{margin:0 0 .3rem}.crate p{margin:0;color:var(--quiet)}
-.c1{--a:#4be3a4}.c2{--a:#ff8a3d}.c3{--a:#7aa7ff}.c4{--a:#ff5ce1}.c5{--a:#ff4040}
-html.t-yellow .crate{--a:#ffeb3b}
-.ears{display:block;width:100%;max-width:30rem;height:auto;margin:1.5rem auto;color:var(--ink)}
-@media (max-width:600px){h1{font-size:2rem}.voice button{width:100%}th,td{padding:.5rem}}
-@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-@media (forced-colors:active){button.primary,button[aria-pressed="true"]{forced-color-adjust:auto}}
+%%CSS%%
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+%%NAV%%
 
 <header>
   <div class="wrap">
@@ -113,30 +30,7 @@ html.t-yellow .crate{--a:#ffeb3b}
     <p id="read-hint" class="sr">Uses your device's voice. If you already use a screen reader, you do not need this.</p>
     <div id="caption" class="caption" aria-hidden="true"></div>
 
-    <details class="opts">
-      <summary>Display options</summary>
-      <fieldset>
-        <legend>Text size</legend>
-        <div class="choices">
-          <label><input type="radio" name="size" value="1"> Normal</label>
-          <label><input type="radio" name="size" value="2"> Large</label>
-          <label><input type="radio" name="size" value="3"> Very large</label>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Colours</legend>
-        <div class="choices">
-          <label><input type="radio" name="theme" value="auto"> Like my device</label>
-          <label><input type="radio" name="theme" value="dark"> White on black</label>
-          <label><input type="radio" name="theme" value="light"> Black on white</label>
-          <label><input type="radio" name="theme" value="yellow"> Yellow on black</label>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Spacing</legend>
-        <div class="choices"><label><input type="checkbox" id="wide"> Wider spacing between lines, words and letters</label></div>
-      </fieldset>
-    </details>
+%%DISPLAY_OPTIONS%%
   </div>
 </header>
 
@@ -272,40 +166,15 @@ html.t-yellow .crate{--a:#ffeb3b}
   </div>
 </main>
 
-<footer>
-  <div class="wrap">
-    <p>Echo Ludwig by BULØKE. Code written together with Claude. Built on FM1 Open by M-VAVE. GPL-3.0 licence.</p>
-  </div>
-</footer>
-
-<div id="status" class="sr" role="status" aria-live="polite"></div>
+%%FOOTER%%
 
 <script>
 {
 const INTRO = %%INTRO%%;
 const VOICE_WASM = "%%VOICE_WASM%%";
-const root = document.documentElement;
-const status = document.getElementById('status');
 const caption = document.getElementById('caption');
-const say = msg => { status.textContent = ''; setTimeout(() => { status.textContent = msg; }, 50); };
 
-/* ---------- display options (remembered) ---------- */
-let prefs = {};
-try { prefs = JSON.parse(localStorage.getItem('echo-site') || '{}'); } catch (e) {}
-const save = () => { try { localStorage.setItem('echo-site', JSON.stringify(prefs)); } catch (e) {} };
-const setClass = (prefix, value) => { [...root.classList].filter(c => c.startsWith(prefix)).forEach(c => root.classList.remove(c)); root.classList.add(prefix + value); };
-for (const r of document.querySelectorAll('input[name=size]')) {
-  r.checked = r.value === String(prefs.size || 1);
-  r.addEventListener('change', () => { prefs.size = r.value; setClass('s-', r.value); save(); say('Text size ' + r.parentElement.textContent.trim()); });
-}
-for (const r of document.querySelectorAll('input[name=theme]')) {
-  r.checked = r.value === (prefs.theme || 'auto');
-  r.addEventListener('change', () => { prefs.theme = r.value; setClass('t-', r.value); save(); say('Colours: ' + r.parentElement.textContent.trim()); });
-}
-const wide = document.getElementById('wide');
-wide.checked = !!prefs.wide;
-wide.addEventListener('change', () => { prefs.wide = wide.checked; root.classList.toggle('wide', wide.checked); save(); say(wide.checked ? 'Wide spacing on' : 'Wide spacing off'); });
-
+%%PREFS_JS%%
 /* ---------- Ludwig, the game's own voice (WebAssembly) ---------- */
 let ac = null, voice = null, ludwigOn = false, source = null;
 const ludwigBtn = document.getElementById('ludwig');

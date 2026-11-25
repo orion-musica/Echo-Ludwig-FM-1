@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" class="t-auto s-1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Echo Ludwig on the M-VAVE FM-1</title>
+<meta name="description" content="Install Echo Ludwig, a free listening game for blind and low-vision players, on the M-VAVE FM-1 from your browser. Requirements, steps, files and the way back to stock firmware.">
+<meta name="color-scheme" content="dark light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+%%PREFS_HEAD%%
+<style>
+%%CSS%%
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+%%NAV%%
+<header>
+  <div class="wrap">
+%%DISPLAY_OPTIONS%%
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <div class="wrap">
+    <h1>Install Echo Ludwig</h1>
+    <p class="lead">Put the game on your M-VAVE FM-1 from the browser, over a USB cable. No drivers, no apps. About five minutes.</p>
+    <div class="note" role="note"><strong>Experimental</strong>Echo Ludwig is new and has been tested on very few devices. Back up first, and keep the FM-1 powered and connected until the installer says it is done. The original firmware is built into the installer, so you can always go back.</div>
+
+    <section aria-labelledby="install">
+      <h2 id="install">Installer</h2>
+      <p>This page checks your browser and the build, then opens the official FM1 Open installer.</p>
+      <div class="panel">
+        <div>
+          <div class="lcdbox" aria-live="polite" aria-atomic="true">
+            <span class="sr">Status:</span>
+            <div class="state" id="state">CHECKING…</div>
+            <p id="state-note">Please wait.</p>
+          </div>
+          <p style="margin-top:1rem"><a class="button" id="start" href="flasher.html" aria-disabled="true">Start the installer</a></p>
+          <p id="start-note">The installer opens in this tab. Use Chrome or Edge on a computer.</p>
+        </div>
+        <div>
+          <h3>Ready check</h3>
+          <ul class="checks">
+            <li id="c-build"><span class="mark">…</span><span>Firmware built and included</span></li>
+            <li id="c-midi"><span class="mark">…</span><span>Browser can talk to MIDI devices</span></li>
+            <li id="c-secure"><span class="mark">…</span><span>Page opened over a secure address</span></li>
+            <li id="c-desk"><span class="mark">…</span><span>A computer, not a phone</span></li>
+          </ul>
+          <h3>This build</h3>
+          <dl class="facts">
+            <dt>File</dt><dd>EchoLudwig.fwsc</dd>
+            <dt>Size</dt><dd id="f-size">–</dd>
+            <dt>Built</dt><dd id="f-date">–</dd>
+            <dt>SHA-256</dt><dd id="f-hash">–</dd>
+            <dt>Base</dt><dd>FM1 Open V14 engine</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="need">
+      <h2 id="need">What you need</h2>
+      <div class="cards">
+        <div><h3>An FM-1</h3><p>Any M-VAVE FM-1, on its original V15 firmware or an FM1 Open build. Charged, or on USB power.</p></div>
+        <div><h3>A USB data cable</h3><p>One that carries data, not just power. Plug it straight into the computer, not into a hub.</p></div>
+        <div><h3>Chrome or Edge</h3><p>On Windows, macOS or Linux. Allow MIDI and SysEx when the browser asks.</p></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="steps">
+      <h2 id="steps">Steps</h2>
+      <ol class="steps">
+        <li><h3>Back up</h3><p>Export the projects, voices and samples you want to keep in the M-VAVE workbench. Echo Ludwig keeps its progress in the storage place of <strong>project slot 15</strong>. Close DAWs and other MIDI apps.</p></li>
+        <li><h3>Connect</h3><p>Switch the FM-1 on, plug in the cable, choose <strong>Start the installer</strong>, then <strong>Connect device</strong>. Allow MIDI and SysEx.</p></li>
+        <li><h3>First time from V15</h3><p>The installer finds <code>FM-1_015</code>. Choose <strong>Enable force flash and reconnect</strong>. Nothing is written yet. Coming from FM1 Open? Skip this step.</p></li>
+        <li><h3>Install</h3><p>Tick the backup confirmation, choose <strong>Force flash</strong> or <strong>Install</strong>, and accept the warning. Do not unplug while it writes.</p></li>
+        <li><h3>Play</h3><p>Wait for the sample check to finish. The FM-1 restarts and Ludwig says “Welcome to Echo Ludwig”.</p></li>
+      </ol>
+      <p>The installer page itself comes from FM1 Open and looks different from this website. If it is hard to use with your screen reader, ask a sighted friend for these few steps; after that, the game speaks for itself.</p>
+    </section>
+
+    <section aria-labelledby="files">
+      <h2 id="files">Files</h2>
+      <p>Everything is open. Check the firmware against its SHA-256 before installing by hand.</p>
+      <div class="cards">
+        <a class="cardlink" href="flasher.html"><h3>Web installer</h3><p>One HTML file with Echo Ludwig and the original V15 inside. Save it to install offline.</p></a>
+        <a class="cardlink" href="../downloads/EchoLudwig.fwsc"><h3>EchoLudwig.fwsc</h3><p>The firmware package on its own.</p></a>
+        <a class="cardlink" href="../downloads/SHA256SUMS.txt"><h3>SHA256SUMS</h3><p>Checksum of the firmware package.</p></a>
+        <a class="cardlink" href="../downloads/ECHO_README.md"><h3>Player notes</h3><p>Controls, modes and storage, as plain text.</p></a>
+        <a class="cardlink" id="src" href="https://github.com/orion-musica/Echo-Ludwig-FM-1"><h3>Source code</h3><p>Full source, GPL-3.0 with the FM1 Open linking exception.</p></a>
+      </div>
+    </section>
+
+    <section aria-labelledby="stock">
+      <h2 id="stock">Back to the original firmware</h2>
+      <p>Changed your mind? Open the installer and choose <strong>Restore original V15</strong>. It installs the original firmware and restores all 128 factory voices.</p>
+      <div class="note" role="note"><strong>Progress</strong>The original firmware does not keep Echo Ludwig's stars and settings. To come back to Echo Ludwig later, use force flash again.</div>
+    </section>
+
+    <section aria-labelledby="help" class="faq">
+      <h2 id="help">Help</h2>
+      <details><summary>The browser does not find the FM-1</summary><p>Close other MIDI apps and installer tabs, switch the FM-1 off and on, reconnect the cable and choose Connect again. Connection details in the installer show which MIDI ports the browser found.</p></details>
+      <details><summary>The start button does not work</summary><p>The ready check above says why. Wrong browser: use Chrome or Edge on a computer; Safari, Firefox and phones cannot talk to MIDI devices. Opened as a file: run <code>OPEN-SITE.bat</code> so the page runs on localhost.</p></details>
+      <details><summary>The update stopped halfway</summary><p>Keep the cable in, switch the FM-1 off and on, reconnect and run the installer again with force flash.</p></details>
+      <details><summary>It says NOT BUILT</summary><p>The firmware has to be compiled once. On Windows run <code>INSTALL-ECHO.bat</code> in the project folder. It builds Echo Ludwig and opens this page on <code>http://localhost:8766</code>.</p></details>
+      <details><summary>Will I lose my projects?</summary><p>An update with the same storage layout keeps valid project slots and the sample bank; Echo Ludwig uses slot 15 for its progress. Switching from V15 does not keep them. Back up either way.</p></details>
+    </section>
+  </div>
+</main>
+
+%%FOOTER%%
+
+<script src="../assets/build-info.js"></script>
+<script>
+{
+%%PREFS_JS%%
+const $ = id => document.getElementById(id);
+const mark = (id, ok) => { const li = $(id); li.className = ok ? 'ok' : ''; li.querySelector('.mark').textContent = ok ? 'OK' : 'NO'; return ok; };
+const build = window.HLV_BUILD;
+const built = mark('c-build', !!(build && build.built));
+const midi = mark('c-midi', typeof navigator.requestMIDIAccess === 'function');
+const secure = mark('c-secure', window.isSecureContext === true && location.protocol !== 'file:');
+const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+mark('c-desk', !mobile);
+if (built) {
+  $('f-size').textContent = (build.bytes / 1024).toFixed(1) + ' KB';
+  $('f-date').textContent = build.date;
+  $('f-hash').textContent = build.sha256;
+}
+const start = $('start');
+let state, note;
+if (!built) { state = 'NOT BUILT'; note = 'Compile once with INSTALL-ECHO.bat (see Help).'; }
+else if (!midi || mobile) { state = 'WRONG BROWSER'; note = 'Open this page in Chrome or Edge on a computer.'; }
+else if (!secure) { state = 'OPEN VIA SERVER'; note = 'Run OPEN-SITE.bat, or use the https site.'; }
+else { state = 'READY'; note = 'Connect the FM-1 and choose Start the installer.'; start.setAttribute('aria-disabled', 'false'); }
+if (built && start.getAttribute('aria-disabled') === 'true') $('start-note').textContent = 'You can still save the installer from Files and open it in a supported browser.';
+if (start.getAttribute('aria-disabled') === 'true') start.removeAttribute('href');
+$('state').textContent = state;
+$('state-note').textContent = note;
+}
+</script>
+</body>
+</html>
