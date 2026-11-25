@@ -1,0 +1,307 @@
+# LUDWIG VOICE lexicon: word -> ARPAbet-style phonemes; digit = stress (1 primary, 2 secondary, 0 none).
+# Single capital letters A-G and I are spoken as letter names. Digits are expanded to number words.
+zero Z IY1 R OW0
+one W AH1 N
+two T UW1
+three TH R IY1
+four F AO1 R
+five F AY1 V
+six S IH1 K S
+seven S EH1 V AX N
+eight EY1 T
+nine N AY1 N
+ten T EH1 N
+eleven IH0 L EH1 V AX N
+twelve T W EH1 L V
+thirteen TH ER1 T IY2 N
+fourteen F AO1 R T IY2 N
+fifteen F IH1 F T IY2 N
+sixteen S IH1 K S T IY2 N
+seventeen S EH1 V AX N T IY2 N
+eighteen EY1 T IY2 N
+nineteen N AY1 N T IY2 N
+twenty T W EH1 N T IY0
+thirty TH ER1 T IY0
+forty F AO1 R T IY0
+fifty F IH1 F T IY0
+sixty S IH1 K S T IY0
+seventy S EH1 V AX N T IY0
+eighty EY1 T IY0
+ninety N AY1 N T IY0
+hundred HH AH1 N D R AX D
+thousand TH AW1 Z AX N D
+letter_a EY1
+letter_b B IY1
+letter_c S IY1
+letter_d D IY1
+letter_e IY1
+letter_f EH1 F
+letter_g JH IY1
+letter_i AY1
+a AX0
+again AX G EH1 N
+almost AO1 L M OW2 S T
+amazing AX M EY1 Z IH0 NG
+and AE1 N D
+any EH1 N IY0
+are AA1 R
+awesome AO1 S AX M
+back B AE1 K
+battery B AE1 T ER0 IY0
+beat B IY1 T
+best B EH1 S T
+bedroom B EH1 D R UW2 M
+bonus B OW1 N AX S
+button B AH1 T AX N
+buttons B AH1 T AX N Z
+by B AY1
+chiptune CH IH1 P T UW2 N
+choose CH UW1 Z
+clara K L AA1 R AX
+club K L AH1 B
+combo K AA1 M B OW0
+complete K AX M P L IY1 T
+congratulations K AX N G R AE2 CH AX L EY1 SH AX N Z
+correct K ER0 EH1 K T
+crate K R EY1 T
+crates K R EY1 T S
+difficulty D IH1 F IH0 K AX L T IY0
+dj D IY1 JH EY1
+down D AW1 N
+drop D R AA1 P
+easy IY1 Z IY0
+echo EH1 K OW0
+electro IH0 L EH1 K T R OW0
+exit EH1 G Z IH0 T
+explorer IH0 K S P L AO1 R ER0
+fast F AE1 S T
+first F ER1 S T
+flat F L AE1 T
+for F AO1 R
+free F R IY1
+game G EY1 M
+go G OW1
+going G OW1 IH0 NG
+good G UH1 D
+goodbye G UH2 D B AY1
+great G R EY1 T
+groove G R UW1 V
+hard HH AA1 R D
+headliner HH EH1 D L AY2 N ER0
+heart HH AA1 R T
+hearts HH AA1 R T S
+help HH EH1 L P
+high HH AY1
+higher HH AY1 ER0
+hint HH IH1 N T
+hold HH OW1 L D
+home HH OW1 M
+house HH AW1 S
+how HH AW1
+in IH1 N
+is IH1 Z
+it IH1 T
+jam JH AE1 M
+keep K IY1 P
+key K IY1
+keys K IY1 Z
+lake L EY1 K
+last L AE1 S T
+left L EH1 F T
+legend L EH1 JH AX N D
+level L EH1 V AX L
+library L AY1 B R EH2 R IY0
+life L AY1 F
+listen L IH1 S AX N
+lives L AY1 V Z
+locked L AA1 K T
+low L OW1
+lower L OW1 ER0
+ludwig L UH1 D V IH0 G
+main M EY1 N
+menu M EH1 N Y UW0
+middle M IH1 D AX L
+minimal M IH1 N IH0 M AX L
+missed M IH1 S T
+mistake M IH0 S T EY1 K
+mistakes M IH0 S T EY1 K S
+mode M OW1 D
+more M AO1 R
+new N UW1
+next N EH1 K S T
+nice N AY1 S
+no N OW1
+normal N AO1 R M AX L
+note N OW1 T
+notes N OW1 T S
+now N AW1
+of AH0 V
+off AO1 F
+on AA1 N
+or AO1 R
+over OW1 V ER0
+perfect P ER1 F IH0 K T
+pitch P IH1 CH
+play P L EY1
+points P OY1 N T S
+practice P R AE1 K T IH0 S
+press P R EH1 S
+previous P R IY1 V IY0 AX S
+quick K W IH1 K
+rank R AE1 NG K
+ready R EH1 D IY0
+record R EH1 K ER0 D
+records R EH1 K ER0 D Z
+replay R IY0 P L EY1
+resident R EH1 Z IH0 D AX N T
+round R AW1 N D
+score S K AO1 R
+scratched S K R AE1 CH T
+screen S K R IY1 N
+select S AX L EH1 K T
+settings S EH1 T IH0 NG Z
+sharp SH AA1 R P
+slow S L OW1
+sound S AW1 N D
+speed S P IY1 D
+stage S T EY1 JH
+star S T AA1 R
+stars S T AA1 R Z
+start S T AA1 R T
+streak S T R IY1 K
+techno T EH1 K N OW0
+tempo T EH1 M P OW0
+the DH AX0
+this DH IH1 S
+times T AY1 M Z
+to T UW0
+trance T R AE1 N S
+try T R AY1
+turn T ER1 N
+unlock AH0 N L AA1 K
+unlocked AH0 N L AA1 K T
+up AH1 P
+voice V OY1 S
+volume V AA1 L Y UW0 M
+warm W AO1 R M
+welcome W EH1 L K AX M
+where W EH1 R
+with W IH1 DH
+yes Y EH1 S
+you Y UW1
+your Y AO1 R
+am AE1 M
+badinerie B AA2 D IY1 N AX R IY2
+beethoven B EY1 T OW2 V AX N
+bach B AA1 K
+bells B EH1 L Z
+blue B L UW1
+brahms B R AA1 M Z
+canon K AE1 N AX N
+chopin SH OW1 P AE2 N
+danube D AE1 N Y UW0 B
+eine AY1 N AX
+elise EY0 L IY1 Z AX
+entertainer EH2 N T ER0 T EY1 N ER0
+funeral F Y UW1 N ER0 AX L
+fur F Y UH1 R
+greensleeves G R IY1 N S L IY2 V Z
+grieg G R IY1 G
+gymnopedie JH IH1 M N OW0 P EY2 D IY0
+hall HH AO1 L
+jingle JH IH1 NG G AX L
+joplin JH AA1 P L IH0 N
+joy JH OY1
+king K IH1 NG
+kleine K L AY1 N AX
+korobeiniki K AA2 R AX B EY1 N IH0 K IY0
+little L IH1 T AX L
+lullaby L AH1 L AX B AY2
+march M AA1 R CH
+minor M AY1 N ER0
+minuet M IH2 N Y UW0 EH1 T
+moonlight M UW1 N L AY2 T
+mood M UW1 D
+morning M AO1 R N IH0 NG
+mountain M AW1 N T AX N
+mozart M OW1 T S AA2 R T
+nachtmusik N AA1 K T M UW0 Z IY2 K
+number N AH1 M B ER0
+ode OW1 D
+pachelbel P AA1 K AX L B EH2 L
+petzold P EH1 T S OW0 L T
+prelude P R EY1 L UW2 D
+rondo R AA1 N D OW0
+alla AA1 L AX
+satie S AE0 T IY1
+sonata S AX N AA1 T AX
+spring S P R IH1 NG
+strauss S T R AW1 S
+swan S W AA1 N
+symphony S IH1 M F AX N IY0
+tchaikovsky CH AY0 K AO1 F S K IY0
+toccata T AX K AA1 T AX
+traditional T R AX D IH1 SH AX N AX L
+turca T UH1 R K AX
+twinkle T W IH1 NG K AX L
+vivaldi V IH0 V AA1 L D IY0
+arpeggio AA2 R P EH1 JH IY0 OW0
+change CH EY1 N JH
+edit EH1 D IH0 T
+effects IH0 F EH1 K T S
+empty EH1 M P T IY0
+envelope EH1 N V AX L OW2 P
+every EH1 V R IY0
+fill F IH1 L
+frequency F R IY1 K W AX N S IY0
+from F R AH1 M
+full F UH1 L
+global G L OW1 B AX L
+grows G R OW1 Z
+hear HH IY1 R
+here HH IY1 R
+if IH1 F
+knob N AA1 B
+less L EH1 S
+listening L IH1 S AX N IH0 NG
+melody M EH1 L AX D IY0
+miss M IH1 S
+not N AA1 T
+octave AA1 K T IH0 V
+only OW1 N L IY0
+original ER0 IH1 JH AX N AX L
+panning P AE1 N IH0 NG
+pause P AO1 Z
+playing P L EY1 IH0 NG
+progress P R AA1 G R EH2 S
+repeat R IH0 P IY1 T
+reset R IY0 S EH1 T
+said S EH1 D
+save S EY1 V
+scale S K EY1 L
+sequencer S IY1 K W AX N S ER0
+short SH AO1 R T
+sounds S AW1 N D Z
+stop S T AA1 P
+style S T AY1 L
+sure SH UH1 R
+talk T AO1 K
+tell T EH1 L
+then DH EH1 N
+used Y UW1 Z D
+very V EH1 R IY0
+what W AH1 T
+whole HH OW1 L
+many M EH1 N IY0
+can K AE1 N
+have HH AE1 V
+lowest L OW1 AX S T
+master M AE1 S T ER0
+speech S P IY1 CH
+there DH EH1 R
+saved S EY1 V D
+while W AY1 L
+music M Y UW1 Z IH0 K
+lights L AY1 T S
+wave W EY1 V
+flash F L AE1 SH

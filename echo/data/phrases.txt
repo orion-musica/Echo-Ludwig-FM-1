@@ -1,0 +1,66 @@
+# Spoken phrases. ID|text. Every word must exist in lexicon.txt (gen_data.py checks).
+# To translate the game later, translate this file + lexicon + phonemes.
+BOOT|welcome to echo ludwig.
+MENU_MAIN|main menu.
+MAIN_PLAY|play
+MAIN_QUICK|quick echo
+MAIN_JAM|jam
+MAIN_LIBRARY|library
+MAIN_EXPLORER|key explorer
+MAIN_SETTINGS|settings
+MAIN_HELP|help
+HELP_MENU|turn the first knob, or press the octave buttons, to choose. press play to select. press home to go back.
+LISTEN|listen.
+YOUR_TURN|your turn.
+HIGHER|higher.
+LOWER|lower.
+TRY_AGAIN|try again.
+LAST_LIFE|last life!
+PRAISE_0|good!
+PRAISE_1|great!
+PRAISE_2|nice!
+PRAISE_3|awesome!
+PRAISE_4|keep going!
+ALMOST|almost there.
+PERFECT|perfect!
+UNLOCKED|record unlocked!
+SCRATCHED|record scratched. press play to try again, or home to go back.
+NEW_RANK|new rank.
+CRATE_UNLOCKED|new crate unlocked!
+LOCKED|locked.
+CRATE_HOW|play three records in the last crate to unlock it.
+HIGH_SCORE|new high score!
+GAME_OVER|game over.
+PAUSED|pause. press play to go on. press home again to go back.
+EXPLORER_INTRO|key explorer. press any key or button. press home two times to exit.
+LIB_EMPTY|the library is empty. unlock records to fill it.
+JAM_INTRO|jam. play the keys over the groove. turn the knob to change the style. press play to stop or start the beat.
+RESET_SURE|reset progress. are you sure? press play for yes, home for no.
+RESET_DONE|progress reset.
+SAVED|saved.
+DROP|drop!
+QUICK_INTRO|quick echo. how many records can you play? you have three lives.
+NO_HINT|no hint in hard mode.
+GAME_HELP|keys, play the melody. play, listen again. sequencer, hint. arpeggio, score. home, pause.
+HELP_1|echo ludwig is a listening game. you hear a short melody, then you play it back on the keys.
+HELP_2|every round, the melody grows. play the whole melody to unlock the record, and hear the drop.
+HELP_3|if you miss a note, I tell you, higher or lower.
+HELP_4|middle C is key 8 from the left. the lowest key is F.
+HELP_5|press play to listen again. press the sequencer button for a hint. press arpeggio for your score.
+HELP_6|press record to repeat what I said. press edit for help, here.
+HELP_7|press scale to change the speech speed. press envelope for more or less talk. press global to change the voice.
+HELP_8|hold home for main menu. turn the master knob for volume.
+BTN_0|octave down. previous.
+BTN_1|octave up. next.
+BTN_2|effects. beat on or off.
+BTN_3|scale. speech speed.
+BTN_4|envelope. more or less talk.
+BTN_5|low frequency. not used.
+BTN_6|edit. help.
+BTN_7|global. change the voice.
+BTN_8|home. back. hold for main menu.
+BTN_9|save. save your progress.
+BTN_10|arpeggio. your score.
+BTN_11|sequencer. hint.
+BTN_12|play. select, start, or listen again.
+BTN_13|record. repeat what I said.

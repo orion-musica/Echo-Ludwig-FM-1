@@ -1,0 +1,38 @@
+# ECHO LUDWIG - melody source (single source of truth)
+# Every melody is a public-domain composition (composed and published before 1929)
+# or a traditional folk tune, re-arranged here as an electronic groove.
+# Notes: NAME+OCTAVE:TICKS  (12 ticks = one quarter note). Keyboard range F3..G5.
+#
+# CRATE|index|display|spoken|bpm|style
+CRATE|1|CHIPTUNE|chiptune|120|chip
+CRATE|2|HOUSE|house|124|house
+CRATE|3|TRANCE|trance|138|trance
+CRATE|4|ELECTRO|electro|128|electro
+CRATE|5|HARD TECHNO|hard techno|150|hard
+#
+# MEL|id|crate|title|spoken title|composer|spoken composer|year|bass root|first round notes|notes
+MEL|twinkle|1|TWINKLE TWINKLE|twinkle twinkle little star|TRADITIONAL|traditional|1761|C|3|C4:12 C4:12 G4:12 G4:12 A4:12 A4:12 G4:24 F4:12 F4:12 E4:12 E4:12 D4:12 D4:12 C4:24
+MEL|ode|1|ODE TO JOY|ode to joy|BEETHOVEN|beethoven|1824|C|3|E4:12 E4:12 F4:12 G4:12 G4:12 F4:12 E4:12 D4:12 C4:12 C4:12 D4:12 E4:12 E4:18 D4:6 D4:24
+MEL|jingle|1|JINGLE BELLS|jingle bells|PIERPONT|traditional|1857|C|3|E4:12 E4:12 E4:24 E4:12 E4:12 E4:24 E4:12 G4:12 C4:18 D4:6 E4:48
+MEL|lullaby|1|LULLABY|lullaby|BRAHMS|brahms|1868|C|3|E4:6 E4:6 G4:24 E4:6 E4:6 G4:24 E4:6 G4:6 C5:12 B4:18 A4:6 A4:12 G4:12
+MEL|moonlight|1|MOONLIGHT SONATA|moonlight sonata|BEETHOVEN|beethoven|1801|C#|3|G#3:4 C#4:4 E4:4 G#3:4 C#4:4 E4:4 A3:4 C#4:4 E4:4 A3:4 D4:4 F#4:4
+MEL|prelude|2|PRELUDE IN C|prelude in C|BACH|bach|1722|C|4|C4:3 E4:3 G4:3 C5:3 E5:3 G4:3 C5:3 E5:3 C4:3 D4:3 A4:3 D5:3 F5:3 A4:3 D5:3 F5:3
+MEL|minuet|2|MINUET IN G|minuet in G|PETZOLD|petzold|1725|G|3|D5:12 G4:6 A4:6 B4:6 C5:6 D5:12 G4:12 G4:12 E5:12 C5:6 D5:6 E5:6 F#5:6 G5:12 G4:12 G4:12
+MEL|spring|2|SPRING|spring|VIVALDI|vivaldi|1725|C|3|C4:12 E4:6 E4:6 E4:6 D4:3 C4:3 G4:24 G4:3 F4:3 E4:6 E4:6 E4:6 D4:3 C4:3 G4:24
+MEL|morning|2|MORNING MOOD|morning mood|GRIEG|grieg|1875|C|4|G4:6 E4:6 D4:6 C4:6 D4:6 E4:6 G4:6 E4:6 D4:6 C4:6 D4:3 E4:3 D4:3 E4:3 G4:12
+MEL|badinerie|2|BADINERIE|badinerie|BACH|bach|1739|B|4|B4:6 D5:3 B4:3 F#4:6 B4:3 F#4:3 D4:6 F#4:3 D4:3 B3:12
+MEL|canon|3|CANON IN D|canon in D|PACHELBEL|pachelbel|1690|D|3|F#5:24 E5:24 D5:24 C#5:24 B4:24 A4:24 B4:24 C#5:24
+MEL|gymnopedie|3|GYMNOPEDIE|gymnopedie|SATIE|satie|1888|C|3|E5:12 G5:12 F5:12 E5:12 B4:12 A4:12 B4:12 C5:12 G4:36
+MEL|danube|3|BLUE DANUBE|blue danube|STRAUSS|strauss|1866|A|3|A3:12 A3:12 C#4:12 E4:12 E4:24 E5:12 E5:12 C#5:24 C#5:24
+MEL|greensleeves|3|GREENSLEEVES|greensleeves|TRADITIONAL|traditional|1580|A|4|A4:6 C5:12 D5:6 E5:9 F5:3 E5:6 D5:12 B4:6 G4:9 A4:3 B4:6 C5:12 A4:6 A4:9 G#4:3 A4:6 B4:12 G#4:6 E4:12
+MEL|swan|3|SWAN LAKE|swan lake|TCHAIKOVSKY|tchaikovsky|1876|B|3|F#4:36 B3:6 C#4:6 D4:6 E4:6 F#4:36 D4:12 F#4:36 D4:12 F#4:36 B3:12
+MEL|korobeiniki|4|KOROBEINIKI|korobeiniki|TRADITIONAL|traditional|1861|A|4|E5:12 B4:6 C5:6 D5:12 C5:6 B4:6 A4:12 A4:6 C5:6 E5:12 D5:6 C5:6 B4:18 C5:6 D5:12 E5:12 C5:12 A4:12 A4:12
+MEL|entertainer|4|THE ENTERTAINER|the entertainer|JOPLIN|joplin|1902|C|4|D4:3 D#4:3 E4:3 C5:6 E4:3 C5:6 E4:3 C5:18 C5:3 D5:3 D#5:3 E5:3 C5:3 D5:3 E5:6 B4:3 D5:6 C5:12
+MEL|nachtmusik|4|EINE KLEINE NACHTMUSIK|eine kleine nachtmusik|MOZART|mozart|1787|G|4|G4:18 D4:6 G4:18 D4:6 G4:6 D4:6 G4:6 B4:6 D5:24
+MEL|symphony40|4|SYMPHONY 40|symphony number 40|MOZART|mozart|1788|G|4|A#4:6 A4:6 A4:12 A#4:6 A4:6 A4:12 A#4:6 A4:6 A4:12 F5:24
+MEL|furelise|4|FUR ELISE|fur elise|BEETHOVEN|beethoven|1810|A|4|E5:3 D#5:3 E5:3 D#5:3 E5:3 B4:3 D5:3 C5:3 A4:9 C4:3 E4:3 A4:3 B4:9 E4:3 G#4:3 B4:3 C5:9
+MEL|fifth|5|SYMPHONY 5|symphony number 5|BEETHOVEN|beethoven|1808|C|4|G4:6 G4:6 G4:6 D#4:36 F4:6 F4:6 F4:6 D4:36
+MEL|toccata|5|TOCCATA IN D MINOR|toccata in D minor|BACH|bach|1704|D|3|A4:3 G4:3 A4:30 G4:3 F4:3 E4:3 D4:3 C#4:12 D4:24
+MEL|mountainking|5|HALL OF THE MOUNTAIN KING|hall of the mountain king|GRIEG|grieg|1875|B|4|B3:6 C#4:6 D4:6 E4:6 F#4:6 D4:6 F#4:12 F4:6 C#4:6 F4:12 E4:6 C4:6 E4:12
+MEL|funeral|5|FUNERAL MARCH|funeral march|CHOPIN|chopin|1837|A#|4|A#3:12 A#3:9 A#3:3 A#3:12 C#4:9 C4:3 C4:9 A#3:3 A#3:9 A3:3 A#3:24
+MEL|turca|5|RONDO ALLA TURCA|rondo alla turca|MOZART|mozart|1783|A|5|B4:3 A4:3 G#4:3 A4:3 C5:12 D5:3 C5:3 B4:3 C5:3 E5:12
