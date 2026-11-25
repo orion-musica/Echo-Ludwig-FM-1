@@ -15,7 +15,20 @@
 #include "echo_fx.h"
 #include <string.h>
 
+#include "../instrument.h"
+
 int groove_master_update(unsigned adc); /* engine: MASTER knob -> output level */
+
+/* The game replaces the base firmware's UI, so the linker would drop the
+ * runtime pieces only that UI used. sdk/Build.ps1 requires them in every
+ * image (Bluetooth, tuning, project edits): keep them referenced. */
+static const void *const echo_keep_linked[] __attribute__((used)) = {
+    (const void *)fm1_ble_set_role, (const void *)fm1_ble_scan, (const void *)fm1_ble_connect,
+    (const void *)fm1_ble_disconnect, (const void *)fm1_ble_get_status, (const void *)fm1_ble_get_device,
+    (const void *)fm1_bluetooth_configure, (const void *)fm1_bluetooth_get_status,
+    (const void *)groove_tuning_capture, (const void *)groove_tuning_apply, (const void *)groove_project_apply_edit,
+};
+const void *const *echo_keep_linked_table(void) { return echo_keep_linked; }
 
 /* Save record lives in the Flash sector of FM-1 project slot 15 (index 14).
  * 3310 / factory projects in that slot are overwritten: back it up first. */
