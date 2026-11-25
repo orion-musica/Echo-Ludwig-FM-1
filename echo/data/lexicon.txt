@@ -305,3 +305,13 @@ music M Y UW1 Z IH0 K
 lights L AY1 T S
 wave W EY1 V
 flash F L AE1 SH
+hello HH AX0 L OW1
+speak S P IY1 K
+so S OW1
+made M EY1 D
+readers R IY1 D ER0 Z
+move M UW1 V
+fun F AH1 N
+page P EY1 JH
+tab T AE1 B
+enter EH1 N T ER0

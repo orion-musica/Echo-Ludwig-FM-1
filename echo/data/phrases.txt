@@ -64,3 +64,9 @@ BTN_10|arpeggio. your score.
 BTN_11|sequencer. hint.
 BTN_12|play. select, start, or listen again.
 BTN_13|record. repeat what I said.
+SITE_1|hello! I am ludwig, the voice of echo ludwig.
+SITE_2|echo ludwig is a listening game. you hear a short melody, then you play it back on the keys.
+SITE_3|every round, the melody grows. play the whole melody to unlock the record, and hear the drop.
+SITE_4|I speak every menu, so you can play with no screen.
+SITE_5|this page is made for screen readers. press tab to move, and enter to select.
+SITE_6|have fun!

@@ -1,27 +1,358 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="t-auto s-1">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Echo Ludwig</title>
-<meta name="description" content="Echo Ludwig: an audio-first echo game for blind players on the M-VAVE FM-1.">
+<title>Echo Ludwig — an echo game for blind players on the M-VAVE FM-1</title>
+<meta name="description" content="Echo Ludwig is a free, open-source listening game for blind and low-vision players on the M-VAVE FM-1. Hear a melody, play it back, watch it grow.">
+<meta name="color-scheme" content="dark light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script>
+/* Apply saved display choices before the page paints (no flash of the wrong theme). */
+try { const s = JSON.parse(localStorage.getItem('echo-site') || '{}');
+  const h = document.documentElement;
+  if (s.theme) h.classList.replace('t-auto', 't-' + s.theme);
+  if (s.size) h.classList.replace('s-1', 's-' + s.size);
+  if (s.wide) h.classList.add('wide'); } catch (e) {}
+</script>
 <style>
-html,body{margin:0;height:100%;background:#000;color:#fff;font:14px/1.6 ui-monospace,Menlo,Consolas,monospace}
-main{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px}
-p{color:#8a8a8a;margin:.4em 0}a{color:#fff}
-nav{margin-top:1.5em;display:flex;gap:24px;justify-content:center;flex-wrap:wrap}
+/* VOICE: calm, plain, spoken first. IDEA: the FM-1's black screen with one small white message.
+   PICTURE: that screen, drawn large. COLOUR: black and white; one focus yellow that is never decoration.
+   TYPE: Atkinson Hyperlegible (made by the Braille Institute for low vision). LAYOUT: one reading column. */
+:root{--bg:#000;--ink:#fff;--quiet:#c8c8c8;--line:#5a5a5a;--focus:#ffd400;--card:#111}
+html.t-light{--bg:#fff;--ink:#000;--quiet:#333;--line:#767676;--focus:#0047ff;--card:#f2f2f2}
+html.t-yellow{--bg:#000;--ink:#ffeb3b;--quiet:#ffe866;--line:#ffeb3b;--focus:#fff;--card:#141400}
+@media (prefers-color-scheme: light){html.t-auto{--bg:#fff;--ink:#000;--quiet:#333;--line:#767676;--focus:#0047ff;--card:#f2f2f2}}
+html.s-1{font-size:112.5%}html.s-2{font-size:150%}html.s-3{font-size:200%}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',Verdana,Arial,sans-serif;line-height:1.6;overflow-x:clip}
+html.wide body{line-height:2;letter-spacing:.06em;word-spacing:.16em}
+html.wide p,html.wide li{margin-bottom:1.4em}
+a{color:var(--ink);text-decoration-thickness:2px;text-underline-offset:.2em}
+a:hover{text-decoration-thickness:4px}
+:focus-visible{outline:4px solid var(--focus);outline-offset:4px}
+.skip{position:absolute;left:1rem;top:-10rem;background:var(--ink);color:var(--bg);padding:.75rem 1rem;font-weight:700;z-index:10}
+.skip:focus{top:1rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:46rem;margin:0 auto;padding:0 1.25rem}
+header{border-bottom:2px solid var(--line);padding:1.25rem 0}
+.voice{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+button,select{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:.5rem;min-height:3rem;padding:.5rem 1rem;cursor:pointer}
+button.primary{background:var(--ink);color:var(--bg);font-weight:700}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+details.opts{margin-top:1rem}
+details.opts summary{cursor:pointer;font-weight:700;min-height:2.75rem;display:flex;align-items:center}
+fieldset{border:2px solid var(--line);border-radius:.5rem;margin:.75rem 0;padding:.5rem 1rem 1rem}
+legend{font-weight:700;padding:0 .4rem}
+.choices{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+.choices label{display:flex;gap:.5rem;align-items:center;min-height:2.75rem;cursor:pointer}
+input[type=radio],input[type=checkbox]{width:1.4rem;height:1.4rem;accent-color:var(--ink)}
+.caption{margin-top:1rem;border-left:4px solid var(--ink);padding:.25rem 0 .25rem 1rem;font-size:1.15rem;min-height:2.5rem}
+.caption:empty{display:none}
+main{padding:2rem 0 3rem}
+h1{font-size:2.6rem;line-height:1.1;margin:.5rem 0 .75rem}
+h2{font-size:1.6rem;line-height:1.2;margin:3rem 0 .75rem;padding-top:1rem;border-top:2px solid var(--line)}
+h3{font-size:1.2rem;margin:1.5rem 0 .25rem}
+.lead{font-size:1.3rem}
+.screen{display:block;width:100%;max-width:24rem;margin:2rem auto;border:2px solid var(--line);border-radius:1rem;background:#000}
+.toc ul{padding-left:1.25rem}.toc li{margin:.35rem 0}
+table{border-collapse:collapse;width:100%;margin:1rem 0}
+caption{text-align:left;font-weight:700;padding-bottom:.5rem}
+th,td{border:2px solid var(--line);padding:.6rem .75rem;text-align:left;vertical-align:top}
+thead th{background:var(--card)}
+.note{border:3px solid var(--ink);border-radius:.5rem;padding:1rem 1.25rem;margin:1.5rem 0;background:var(--card)}
+.note strong{display:block;margin-bottom:.25rem}
+.big-links{display:flex;flex-wrap:wrap;gap:1rem;margin:1.5rem 0}
+.big-links a{display:inline-flex;align-items:center;min-height:3.25rem;padding:.6rem 1.25rem;border:2px solid var(--ink);border-radius:.5rem;font-weight:700;text-decoration:none}
+.big-links a:hover{background:var(--ink);color:var(--bg)}
+.reading{outline:3px dashed var(--focus);outline-offset:6px;background:var(--card)}
+footer{border-top:2px solid var(--line);padding:2rem 0 3rem;color:var(--quiet)}
+footer a{color:var(--quiet)}
+@media (max-width:600px){h1{font-size:2rem}.voice button{width:100%}th,td{padding:.5rem}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media (forced-colors:active){button.primary,button[aria-pressed="true"]{forced-color-adjust:auto}}
 </style>
 </head>
 <body>
-<main>
-<div>
-<div aria-hidden="true">&#9835;</div>
-<h1 style="font-size:16px;letter-spacing:.06em;margin:.3em 0">ECHO LUDWIG</h1>
-<p>An echo game for blind players on the M-VAVE FM-1.</p>
-<p>Hear a melody, play it back, watch it grow.</p>
-<nav><a href="play/">Play in the browser</a><a href="install/">Install on the FM-1</a><a href="https://github.com/orion-musica/Echo-Ludwig-FM-1">Source</a></nav>
-<p style="margin-top:2em">Full landing page coming soon · by BUL&Oslash;KE</p>
-</div>
+<a class="skip" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap">
+    <div class="voice" role="group" aria-label="Listen">
+      <button id="ludwig" class="primary" autofocus aria-describedby="ludwig-hint">Hear Ludwig introduce the game</button>
+      <button id="read" aria-pressed="false" aria-describedby="read-hint">Read this page aloud</button>
+      <label for="rate">Reading speed</label>
+      <select id="rate" ><option value="0.8">Slow</option><option value="1" selected>Normal</option><option value="1.3">Fast</option><option value="1.7">Very fast</option></select>
+    </div>
+    <p id="ludwig-hint" class="sr">Ludwig is the game's own synthetic voice. About 25 seconds. Press again to stop.</p>
+    <p id="read-hint" class="sr">Uses your device's voice. If you already use a screen reader, you do not need this.</p>
+    <div id="caption" class="caption" aria-hidden="true"></div>
+
+    <details class="opts">
+      <summary>Display options</summary>
+      <fieldset>
+        <legend>Text size</legend>
+        <div class="choices">
+          <label><input type="radio" name="size" value="1"> Normal</label>
+          <label><input type="radio" name="size" value="2"> Large</label>
+          <label><input type="radio" name="size" value="3"> Very large</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Colours</legend>
+        <div class="choices">
+          <label><input type="radio" name="theme" value="auto"> Like my device</label>
+          <label><input type="radio" name="theme" value="dark"> White on black</label>
+          <label><input type="radio" name="theme" value="light"> Black on white</label>
+          <label><input type="radio" name="theme" value="yellow"> Yellow on black</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Spacing</legend>
+        <div class="choices"><label><input type="checkbox" id="wide"> Wider spacing between lines, words and letters</label></div>
+      </fieldset>
+    </details>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <div class="wrap">
+    <section data-read aria-labelledby="top">
+      <h1 id="top">Echo Ludwig</h1>
+      <p class="lead">A listening game for blind and low-vision players on the M-VAVE FM-1 pocket synthesizer. Hear a melody, play it back, watch it grow.</p>
+      <p>Free and open source, by BULØKE. Experimental: the first builds are being tested now.</p>
+    </section>
+
+    <svg class="screen" viewBox="0 0 240 240" role="img" aria-labelledby="screen-title">
+      <title id="screen-title">The game's screen: all black, with one small white message in the middle. A speaker icon and the word LISTEN.</title>
+      <rect width="240" height="240" fill="#000"/>
+      <g fill="#fff"><path d="M104 92h8l8-8v28l-8-8h-8z"/><path d="M125 90q6 8 0 16" stroke="#fff" stroke-width="2.5" fill="none"/><path d="M130 85q11 13 0 26" stroke="#fff" stroke-width="2.5" fill="none"/></g>
+      <text x="120" y="134" fill="#fff" font-family="ui-monospace,monospace" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">LISTEN</text>
+      <text x="120" y="152" fill="#9a9a9a" font-family="ui-monospace,monospace" font-size="9" text-anchor="middle" letter-spacing="1">ROUND 1   NOTES 3</text>
+    </svg>
+
+    <nav class="toc" aria-label="On this page">
+      <h2 id="toc-h" style="border:0;margin-top:0">On this page</h2>
+      <ul>
+        <li><a href="#how">How to play</a></li>
+        <li><a href="#access">Made for listening</a></li>
+        <li><a href="#controls">Controls</a></li>
+        <li><a href="#music">The music</a></li>
+        <li><a href="#try">Play in your browser</a></li>
+        <li><a href="#install">Install on the FM-1</a></li>
+        <li><a href="#statement">Accessibility of this website</a></li>
+      </ul>
+    </nav>
+
+    <section data-read aria-labelledby="how">
+      <h2 id="how">How to play</h2>
+      <ol>
+        <li>Ludwig says “listen” and plays a short melody, a few notes long.</li>
+        <li>Two short beeps mean it is your turn. Play the melody back on the keys.</li>
+        <li>Played a wrong note? Ludwig tells you “higher” or “lower”, with a rising or falling sound.</li>
+        <li>Every round the melody grows by one or two notes.</li>
+        <li>Play the whole melody to unlock the record. Then the drop plays: the melody as a full dance track.</li>
+      </ol>
+      <p>Records earn up to three stars. Three records in a crate open the next crate. Your rank grows with your stars, from Bedroom DJ to Main Stage Legend.</p>
+      <p>Other modes: Quick Echo (records one after another on three lives), Jam (play over a beat), Library (listen to your records) and Key Explorer (press any key or button and Ludwig names it).</p>
+    </section>
+
+    <section data-read aria-labelledby="access">
+      <h2 id="access">Made for listening</h2>
+      <ul>
+        <li><strong>Every menu is spoken</strong> by Ludwig, the game's own small speech synthesizer. You never need the screen.</li>
+        <li><strong>Sound icons</strong> tell you where you are: menu ticks rise in pitch from the first item to the last, and every event has its own short sound.</li>
+        <li><strong>Pitch panning</strong>: in headphones, low notes sit slightly to the left and high notes to the right.</li>
+        <li><strong>Your choice of talk</strong>: full, short, or sounds only. Two voices and four speeds.</li>
+        <li><strong>Repeat and help</strong>: one button repeats what Ludwig said; another explains where you are.</li>
+        <li><strong>Learn the keyboard</strong>: middle C is the 8th key from the left. Key Explorer names every key and button.</li>
+        <li><strong>For sighted helpers</strong>: the screen stays black with one small white message, and a light wave runs over the buttons when you press them.</li>
+      </ul>
+      <div class="note" role="note"><strong>Light sensitivity</strong>The game can flash its small screen white when you press a key, never more than three times a second. Turn it off in Settings, Lights. This website does not flash.</div>
+    </section>
+
+    <section data-read aria-labelledby="controls">
+      <h2 id="controls">Controls</h2>
+      <table>
+        <caption>FM-1 controls in menus and in the game</caption>
+        <thead><tr><th scope="col">Control</th><th scope="col">In menus</th><th scope="col">In the game</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Knob 1, or OCT minus and OCT plus</th><td>Previous and next item</td><td>Not used</td></tr>
+          <tr><th scope="row">Knob 2</th><td>Change a setting</td><td>Not used</td></tr>
+          <tr><th scope="row">PLAY</th><td>Select</td><td>Listen again</td></tr>
+          <tr><th scope="row">HOME</th><td>Back. Hold for the main menu</td><td>Pause</td></tr>
+          <tr><th scope="row">REC</th><td>Repeat what Ludwig said</td><td>Repeat what Ludwig said</td></tr>
+          <tr><th scope="row">EDIT</th><td>Help for this place</td><td>Game help</td></tr>
+          <tr><th scope="row">ARP</th><td>Your rank and stars</td><td>Score, round and lives</td></tr>
+          <tr><th scope="row">SEQ</th><td>Not used</td><td>Hint: plays the next note</td></tr>
+          <tr><th scope="row">SCL, ENV, GLO</th><td>Speech speed, how much Ludwig talks, voice</td><td>The same</td></tr>
+          <tr><th scope="row">The 27 keys, F to G</th><td>Key Explorer names them</td><td>Play your answer</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section data-read aria-labelledby="music">
+      <h2 id="music">The music</h2>
+      <p>25 famous melodies in five crates, each crate in its own electronic style. All of them are classical works composed before 1929, or traditional songs, so they are free for everyone to use.</p>
+      <h3>Crate 1, Chiptune</h3><p>Twinkle Twinkle, Ode to Joy, Jingle Bells, Brahms's Lullaby, Moonlight Sonata.</p>
+      <h3>Crate 2, House</h3><p>Bach's Prelude in C, Minuet in G, Vivaldi's Spring, Grieg's Morning Mood, Bach's Badinerie.</p>
+      <h3>Crate 3, Trance</h3><p>Pachelbel's Canon, Satie's Gymnopédie, The Blue Danube, Greensleeves, Swan Lake.</p>
+      <h3>Crate 4, Electro</h3><p>Korobeiniki, The Entertainer, Eine kleine Nachtmusik, Mozart's Symphony 40, Für Elise.</p>
+      <h3>Crate 5, Hard Techno</h3><p>Beethoven's Fifth, Toccata in D minor, In the Hall of the Mountain King, Chopin's Funeral March, Rondo alla Turca.</p>
+    </section>
+
+    <section data-read aria-labelledby="try">
+      <h2 id="try">Play in your browser</h2>
+      <p>The browser version runs the same code as the firmware, with the same voice and sounds. Sound on, and use headphones if you can.</p>
+      <p>Keys on a computer keyboard: the letters A W S E D F T G Y H U J K O L P are the piano keys. Left and right arrows move through menus. Enter selects. Escape goes back. The number keys 1 to 0 are the FM-1's other buttons; 0 repeats what Ludwig said.</p>
+      <p>If you use a screen reader, Ludwig and your screen reader will both talk. You may want to pause your screen reader's speech while you play.</p>
+      <div class="big-links"><a href="play/">Play Echo Ludwig in the browser</a></div>
+    </section>
+
+    <section data-read aria-labelledby="install">
+      <h2 id="install">Install on the FM-1</h2>
+      <ol>
+        <li>Back up your FM-1 projects, voices and samples in the M-VAVE workbench.</li>
+        <li>Connect the FM-1 to a computer by USB and open the installer in Chrome or Edge.</li>
+        <li>Follow the installer. Keep the FM-1 connected until it says it is done.</li>
+        <li>The FM-1 restarts and Ludwig says “Welcome to Echo Ludwig”.</li>
+      </ol>
+      <div class="note" role="note"><strong>Before you install</strong>Echo Ludwig keeps your progress in the storage place of project slot 15, so a project saved there is replaced. The installer includes the original firmware, so you can always go back.</div>
+      <div class="big-links"><a href="install/">Open the installer</a><a href="https://github.com/orion-musica/Echo-Ludwig-FM-1">Source code on GitHub</a></div>
+    </section>
+
+    <section data-read aria-labelledby="statement">
+      <h2 id="statement">Accessibility of this website</h2>
+      <p>This website aims to meet WCAG 2.2 level AA. It works with a keyboard and with screen readers, has no flashing and no sound until you ask for it, and lets you change text size, colours and spacing above. Your choices are remembered on this device.</p>
+      <p>It has not yet been tested by blind users. If something does not work for you, please tell us on GitHub in the issues section of the project. Your report helps the next player.</p>
+      <div class="big-links"><a href="https://github.com/orion-musica/Echo-Ludwig-FM-1/issues">Report a problem</a></div>
+    </section>
+  </div>
 </main>
+
+<footer>
+  <div class="wrap">
+    <p>Echo Ludwig by BULØKE. Code written together with Claude. Built on FM1 Open by M-VAVE. GPL-3.0 licence.</p>
+  </div>
+</footer>
+
+<div id="status" class="sr" role="status" aria-live="polite"></div>
+
+<script>
+{
+const INTRO = ["hello! I am ludwig, the voice of echo ludwig.", "echo ludwig is a listening game. you hear a short melody, then you play it back on the keys.", "every round, the melody grows. play the whole melody to unlock the record, and hear the drop.", "I speak every menu, so you can play with no screen.", "this page is made for screen readers. press tab to move, and enter to select.", "have fun!"];
+const VOICE_WASM = "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9KCAAEEAIAJBBXQiAEGeiICAAGovAQCzIgo4AtTyoIAAQQAgAEGciICAAGovAQCzIgs4AtDyoIAAQQAgAEGaiICAAGovAQCzIgw4AszyoIAAQQAgAEGmiICAAGovAQCzQwAAekRC////h5DAACAHiEIBg1AiBBsiDTgC6PKggABBACAAQaSIgIAAai8BALNDAIA7RSAEGyIOOALk8qCAAEEAIABBooiAgABqLQAAs0MK1yM8lCIPOALg8qCAAEEAIABBoYiAgABqLQAAs0MK1yM8lCIQOALc8qCAAEEAIABBoIiAgABqLQAAs0MK1yM8lCIROALY8qCAAEEAQQAqAqyygIAAIgYgAEGYiICAAGovAQCzlCISOALI8qCAAEEAIAYgAEGWiICAAGovAQCzlCITOALE8qCAAEEAIAYgAEGUiICAAGovAQCzlCIUOALA8qCAAAJAAkBDAGBqRyAIIAmUIglDZmawQZQiCCAIQwBgakdeGyIIQwAAgE9dIAhDAAAAAGBxRQ0AIAipIQAMAQtBACEAC0EAIAA7AZzzoIAAAkACQAJAAkACQCABLQAAQX9qDgoABAQEAQICAgIDBAtBAEEBOgD+86CAAEEAIA04AvTzoIAAQQAgDjgC8POggABBACAPOALs86CAAEEAIBA4AujzoIAAQQAgETgC5POggABBACAKOALg86CAAEEAIAs4AtzzoIAAQQAgDDgC2POggABBACANOALI86CAAEEAIA44AsTzoIAAQQAgDzgCwPOggABBACAQOAK886CAAEEAIBE4ArjzoIAAQQAgCjgCtPOggABBACALOAKw86CAAEEAIAw4AqzzoIAAQQAgEjgCqPOggABBACATOAKk86CAAEEAIBQ4AqDzoIAAQQAgBiACQQV0IgBBroiAgABqLwEAs5Q4AtTzoIAAQQAgBiAAQayIgIAAai8BALOUOALQ86CAAEEAIAYgAEGqiICAAGovAQCzlDgCzPOggAACQAJAQwBgakcgCUPNzMw+lENmZrBBlCIGIAZDAGBqR14bIgZDAACAT10gBkMAAAAAYHFFDQAgBqkhAAwBC0EAIQALQQAgADsBnPOggABBAEECNgLg9KCAAAJAQwBgakcgCUOamRk/lENmZrBBlCIGIAZDAGBqR14bIgZDAACAT10gBkMAAAAAYHFFDQBBACAGqTsB/POg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";
+const root = document.documentElement;
+const status = document.getElementById('status');
+const caption = document.getElementById('caption');
+const say = msg => { status.textContent = ''; setTimeout(() => { status.textContent = msg; }, 50); };
+
+/* ---------- display options (remembered) ---------- */
+let prefs = {};
+try { prefs = JSON.parse(localStorage.getItem('echo-site') || '{}'); } catch (e) {}
+const save = () => { try { localStorage.setItem('echo-site', JSON.stringify(prefs)); } catch (e) {} };
+const setClass = (prefix, value) => { [...root.classList].filter(c => c.startsWith(prefix)).forEach(c => root.classList.remove(c)); root.classList.add(prefix + value); };
+for (const r of document.querySelectorAll('input[name=size]')) {
+  r.checked = r.value === String(prefs.size || 1);
+  r.addEventListener('change', () => { prefs.size = r.value; setClass('s-', r.value); save(); say('Text size ' + r.parentElement.textContent.trim()); });
+}
+for (const r of document.querySelectorAll('input[name=theme]')) {
+  r.checked = r.value === (prefs.theme || 'auto');
+  r.addEventListener('change', () => { prefs.theme = r.value; setClass('t-', r.value); save(); say('Colours: ' + r.parentElement.textContent.trim()); });
+}
+const wide = document.getElementById('wide');
+wide.checked = !!prefs.wide;
+wide.addEventListener('change', () => { prefs.wide = wide.checked; root.classList.toggle('wide', wide.checked); save(); say(wide.checked ? 'Wide spacing on' : 'Wide spacing off'); });
+
+/* ---------- Ludwig, the game's own voice (WebAssembly) ---------- */
+let ac = null, voice = null, ludwigOn = false, source = null;
+const ludwigBtn = document.getElementById('ludwig');
+async function loadVoice() {
+  if (voice) return voice;
+  const bytes = Uint8Array.from(atob(VOICE_WASM), c => c.charCodeAt(0));
+  const { instance } = await WebAssembly.instantiate(bytes, { env: {} });
+  voice = instance.exports; voice.init(); voice.voice(0, 1);
+  return voice;
+}
+function speakLudwig(text) {
+  const enc = new TextEncoder().encode(text.slice(0, 590) + '\0');
+  new Uint8Array(voice.memory.buffer, voice.text(), enc.length).set(enc);
+  const n = voice.say();
+  const pcm = new Int16Array(voice.memory.buffer, voice.pcm(), n);
+  const buf = ac.createBuffer(1, n, 22050), ch = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) ch[i] = pcm[i] / 32768 * 1.6;
+  return new Promise(done => { source = ac.createBufferSource(); source.buffer = buf; source.connect(ac.destination); source.onended = done; source.start(); });
+}
+function stopLudwig() {
+  ludwigOn = false; caption.textContent = '';
+  if (source) { try { source.onended = null; source.stop(); } catch (e) {} source = null; }
+  ludwigBtn.textContent = 'Hear Ludwig introduce the game';
+}
+ludwigBtn.addEventListener('click', async () => {
+  if (ludwigOn) { stopLudwig(); say('Ludwig stopped'); return; }
+  stopReading();
+  try {
+    ac = ac || new AudioContext();
+    await ac.resume();
+    await loadVoice();
+  } catch (e) { say('Sorry, sound could not start in this browser.'); return; }
+  ludwigOn = true; ludwigBtn.textContent = 'Stop Ludwig';
+  for (const line of INTRO) {
+    if (!ludwigOn) return;
+    caption.textContent = (line.charAt(0).toUpperCase() + line.slice(1)).replace(/\bludwig\b/g, 'Ludwig').replace(/\becho\b/g, 'Echo');
+    await speakLudwig(line);
+  }
+  stopLudwig();
+});
+
+/* ---------- read the page aloud (the device's own voice) ---------- */
+const readBtn = document.getElementById('read'), rate = document.getElementById('rate');
+const synth = window.speechSynthesis;
+let reading = false, blocks = [], index = 0, current = null;
+if (prefs.rate) rate.value = prefs.rate;
+rate.addEventListener('change', () => { prefs.rate = rate.value; save(); say('Reading speed ' + rate.options[rate.selectedIndex].text); });
+if (!synth || typeof SpeechSynthesisUtterance === 'undefined') { readBtn.hidden = true; rate.hidden = true; }
+function mark(el) {
+  if (current) current.classList.remove('reading');
+  current = el;
+  if (el) {
+    el.classList.add('reading');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' });
+  }
+}
+function stopReading() {
+  if (!reading) return;
+  reading = false; synth.cancel(); mark(null);
+  readBtn.setAttribute('aria-pressed', 'false'); readBtn.textContent = 'Read this page aloud';
+}
+function readNext() {
+  if (!reading) return;
+  if (index >= blocks.length) { stopReading(); say('Finished reading'); return; }
+  const el = blocks[index++];
+  const text = el.matches('table') ? [...el.rows].map(r => [...r.cells].map(c => c.textContent.trim()).join(', ')).join('. ') : el.textContent.replace(/\s+/g, ' ').trim();
+  if (!text) { readNext(); return; }
+  mark(el);
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-GB'; u.rate = Number(rate.value);
+  const v = synth.getVoices().find(x => /^en(-|_)/i.test(x.lang));
+  if (v) u.voice = v;
+  u.onend = readNext; u.onerror = readNext;
+  synth.speak(u);
+}
+readBtn.addEventListener('click', () => {
+  if (reading) { stopReading(); say('Reading stopped'); return; }
+  stopLudwig();
+  blocks = [...document.querySelectorAll('[data-read] h1, [data-read] h2, [data-read] h3, [data-read] p, [data-read] li, [data-read] table, [data-read] .note')]
+    .filter(el => !el.closest('.note') || el.matches('.note'));
+  index = 0; reading = true;
+  readBtn.setAttribute('aria-pressed', 'true'); readBtn.textContent = 'Stop reading';
+  synth.cancel(); readNext();
+});
+addEventListener('keydown', e => { if (e.key === 'Escape') { if (reading) { stopReading(); say('Reading stopped'); } if (ludwigOn) { stopLudwig(); say('Ludwig stopped'); } } });
+}
+</script>
 </body>
 </html>
