@@ -70,6 +70,29 @@ thead th{background:var(--card)}
 .reading{outline:3px dashed var(--focus);outline-offset:6px;background:var(--card)}
 footer{border-top:2px solid var(--line);padding:2rem 0 3rem;color:var(--quiet)}
 footer a{color:var(--quiet)}
+
+/* ---- pictures ---- */
+.hero{max-width:64rem;margin:0 auto;padding:0 1.25rem}
+.device{display:block;width:100%;height:auto;margin:1.5rem 0 .5rem}
+.device .glow{opacity:0;animation:wave 1.6s ease-out 2 both}
+@keyframes wave{0%{opacity:0}18%{opacity:.95}60%{opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.device .glow{animation:none;opacity:0}.device .still{opacity:.9}}
+.device-cap{color:var(--quiet);text-align:center;margin:0 0 1rem}
+ol.steps{list-style:none;counter-reset:step;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12.5rem),1fr));gap:1rem}
+ol.steps li{counter-increment:step;background:var(--card);border:2px solid var(--line);border-radius:1rem;padding:1rem 1.1rem;margin:0}
+ol.steps li::before{content:counter(step);display:inline-grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--ink);color:var(--bg);font-weight:700;margin-right:.6rem}
+ol.steps svg{display:block;width:3rem;height:3rem;margin:.6rem 0 .4rem;color:var(--ink)}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:1rem;margin:1.5rem 0}
+.shots figure{margin:0;text-align:center}
+.shots img{display:block;width:100%;aspect-ratio:5/3;image-rendering:pixelated;background:#000;border:2px solid var(--line);border-radius:.75rem}
+.shots figcaption{margin-top:.5rem;color:var(--quiet)}
+.crates{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:1.25rem;margin-top:1.5rem}
+.crate{background:var(--card);border:2px solid var(--line);border-radius:1rem;overflow:hidden}
+.crate svg{display:block;width:100%;height:auto;aspect-ratio:1;background:#000}
+.crate div{padding:.9rem 1rem 1.1rem}.crate h3{margin:0 0 .3rem}.crate p{margin:0;color:var(--quiet)}
+.c1{--a:#4be3a4}.c2{--a:#ff8a3d}.c3{--a:#7aa7ff}.c4{--a:#ff5ce1}.c5{--a:#ff4040}
+html.t-yellow .crate{--a:#ffeb3b}
+.ears{display:block;width:100%;max-width:30rem;height:auto;margin:1.5rem auto;color:var(--ink)}
 @media (max-width:600px){h1{font-size:2rem}.voice button{width:100%}th,td{padding:.5rem}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 @media (forced-colors:active){button.primary,button[aria-pressed="true"]{forced-color-adjust:auto}}
@@ -125,13 +148,12 @@ footer a{color:var(--quiet)}
       <p>Free and open source, by BULØKE. Experimental: the first builds are being tested now.</p>
     </section>
 
-    <svg class="screen" viewBox="0 0 240 240" role="img" aria-labelledby="screen-title">
-      <title id="screen-title">The game's screen: all black, with one small white message in the middle. A speaker icon and the word LISTEN.</title>
-      <rect width="240" height="240" fill="#000"/>
-      <g fill="#fff"><path d="M104 92h8l8-8v28l-8-8h-8z"/><path d="M125 90q6 8 0 16" stroke="#fff" stroke-width="2.5" fill="none"/><path d="M130 85q11 13 0 26" stroke="#fff" stroke-width="2.5" fill="none"/></g>
-      <text x="120" y="134" fill="#fff" font-family="ui-monospace,monospace" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">LISTEN</text>
-      <text x="120" y="152" fill="#9a9a9a" font-family="ui-monospace,monospace" font-size="9" text-anchor="middle" letter-spacing="1">ROUND 1   NOTES 3</text>
-    </svg>
+  </div>
+  <div class="hero">
+    %%HERO%%
+    <p class="device-cap" aria-hidden="true">Press a key: Ludwig listens, and the light follows your hand.</p>
+  </div>
+  <div class="wrap">
 
     <nav class="toc" aria-label="On this page">
       <h2 id="toc-h" style="border:0;margin-top:0">On this page</h2>
@@ -148,13 +170,21 @@ footer a{color:var(--quiet)}
 
     <section data-read aria-labelledby="how">
       <h2 id="how">How to play</h2>
-      <ol>
-        <li>Ludwig says “listen” and plays a short melody, a few notes long.</li>
-        <li>Two short beeps mean it is your turn. Play the melody back on the keys.</li>
-        <li>Played a wrong note? Ludwig tells you “higher” or “lower”, with a rising or falling sound.</li>
-        <li>Every round the melody grows by one or two notes.</li>
-        <li>Play the whole melody to unlock the record. Then the drop plays: the melody as a full dance track.</li>
+      <ol class="steps">
+        <li><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M8 19h8l10-8v26l-10-8H8z" fill="currentColor"/><path d="M32 17q5 7 0 14"/><path d="M37 12q10 12 0 24"/></svg>Ludwig says “listen” and plays a short melody, a few notes long.</li>
+        <li><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3"><rect x="5" y="10" width="38" height="28" rx="3"/><path d="M14 10v28M24 10v28M34 10v28"/><rect x="11" y="10" width="6" height="15" fill="currentColor"/><rect x="21" y="10" width="6" height="15" fill="currentColor"/><rect x="31" y="10" width="6" height="15" fill="currentColor"/></svg>Two short beeps mean it is your turn. Play the melody back on the keys.</li>
+        <li><svg viewBox="0 0 48 48" aria-hidden="true" fill="currentColor"><path d="M14 6l10 13H18v10h-8V19H4z"/><path d="M34 42l10-13h-6V19h-8v10h-6z"/></svg>Played a wrong note? Ludwig tells you “higher” or “lower”, with a rising or falling sound.</li>
+        <li><svg viewBox="0 0 48 48" aria-hidden="true" fill="currentColor"><rect x="5" y="32" width="7" height="10" rx="1.5"/><rect x="15" y="25" width="7" height="17" rx="1.5"/><rect x="25" y="17" width="7" height="25" rx="1.5"/><rect x="35" y="7" width="7" height="35" rx="1.5"/></svg>Every round the melody grows by one or two notes.</li>
+        <li><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3"><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="12" stroke-width="1.5"/><circle cx="24" cy="24" r="3.5" fill="currentColor"/><path d="M38 4l2.4 5 5.4.6-4 3.7 1.1 5.4-4.9-2.7-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z" fill="currentColor" stroke="none"/></svg>Play the whole melody to unlock the record. Then the drop plays: the melody as a full dance track.</li>
       </ol>
+      <h3>What the screen shows</h3>
+      <p>For anyone watching, the screen stays black with one small white message.</p>
+      <div class="shots">
+        <figure><img src="assets/screens/listen.png" width="160" height="96" alt="Screen: a speaker icon, the word LISTEN, and below it ROUND 1, NOTES 3."><figcaption>Listen</figcaption></figure>
+        <figure><img src="assets/screens/your-turn.png" width="160" height="96" alt="Screen: a keyboard icon, YOUR TURN, and NOTE 2 of 5 with three lives left."><figcaption>Your turn</figcaption></figure>
+        <figure><img src="assets/screens/higher.png" width="160" height="96" alt="Screen: a cross icon and the word HIGHER after a wrong note."><figcaption>Higher</figcaption></figure>
+        <figure><img src="assets/screens/unlocked.png" width="160" height="96" alt="Screen: a star icon, UNLOCKED, and three stars."><figcaption>Unlocked</figcaption></figure>
+      </div>
       <p>Records earn up to three stars. Three records in a crate open the next crate. Your rank grows with your stars, from Bedroom DJ to Main Stage Legend.</p>
       <p>Other modes: Quick Echo (records one after another on three lives), Jam (play over a beat), Library (listen to your records) and Key Explorer (press any key or button and Ludwig names it).</p>
     </section>
@@ -170,6 +200,14 @@ footer a{color:var(--quiet)}
         <li><strong>Learn the keyboard</strong>: middle C is the 8th key from the left. Key Explorer names every key and button.</li>
         <li><strong>For sighted helpers</strong>: the screen stays black with one small white message, and a light wave runs over the buttons when you press them.</li>
       </ul>
+      <svg class="ears" viewBox="0 0 480 200" role="img" aria-labelledby="ears-t">
+        <title id="ears-t">Headphones: low notes sound a little in the left ear, high notes a little in the right ear.</title>
+        <path d="M110 150V110a130 100 0 0 1 260 0v40" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/>
+        <rect x="80" y="120" width="56" height="74" rx="18" fill="currentColor"/><rect x="344" y="120" width="56" height="74" rx="18" fill="currentColor"/>
+        <g fill="currentColor"><ellipse cx="34" cy="168" rx="11" ry="8"/><path d="M43 168V128h4v40z"/><ellipse cx="446" cy="88" rx="11" ry="8"/><path d="M455 88V48h4v40z"/></g>
+        <text x="34" y="122" text-anchor="middle" font-size="18" fill="currentColor" font-family="inherit">low</text>
+        <text x="446" y="38" text-anchor="middle" font-size="18" fill="currentColor" font-family="inherit">high</text>
+      </svg>
       <div class="note" role="note"><strong>Light sensitivity</strong>The game can flash its small screen white when you press a key, never more than three times a second. Turn it off in Settings, Lights. This website does not flash.</div>
     </section>
 
@@ -196,11 +234,13 @@ footer a{color:var(--quiet)}
     <section data-read aria-labelledby="music">
       <h2 id="music">The music</h2>
       <p>25 famous melodies in five crates, each crate in its own electronic style. All of them are classical works composed before 1929, or traditional songs, so they are free for everyone to use.</p>
-      <h3>Crate 1, Chiptune</h3><p>Twinkle Twinkle, Ode to Joy, Jingle Bells, Brahms's Lullaby, Moonlight Sonata.</p>
-      <h3>Crate 2, House</h3><p>Bach's Prelude in C, Minuet in G, Vivaldi's Spring, Grieg's Morning Mood, Bach's Badinerie.</p>
-      <h3>Crate 3, Trance</h3><p>Pachelbel's Canon, Satie's Gymnopédie, The Blue Danube, Greensleeves, Swan Lake.</p>
-      <h3>Crate 4, Electro</h3><p>Korobeiniki, The Entertainer, Eine kleine Nachtmusik, Mozart's Symphony 40, Für Elise.</p>
-      <h3>Crate 5, Hard Techno</h3><p>Beethoven's Fifth, Toccata in D minor, In the Hall of the Mountain King, Chopin's Funeral March, Rondo alla Turca.</p>
+      <div class="crates">
+        <article class="crate c1"><svg viewBox="0 0 160 160" aria-hidden="true"><rect x="20" y="120" width="18" height="18" fill="var(--a)" opacity="1.00"/><rect x="40" y="120" width="18" height="18" fill="var(--a)" opacity="1.00"/><rect x="60" y="120" width="18" height="18" fill="var(--a)" opacity="1.00"/><rect x="80" y="120" width="18" height="18" fill="var(--a)" opacity="1.00"/><rect x="100" y="120" width="18" height="18" fill="var(--a)" opacity="1.00"/><rect x="120" y="120" width="18" height="18" fill="var(--a)" opacity="1.00"/><rect x="40" y="100" width="18" height="18" fill="var(--a)" opacity="0.85"/><rect x="60" y="100" width="18" height="18" fill="var(--a)" opacity="0.85"/><rect x="80" y="100" width="18" height="18" fill="var(--a)" opacity="0.85"/><rect x="100" y="100" width="18" height="18" fill="var(--a)" opacity="0.85"/><rect x="60" y="80" width="18" height="18" fill="var(--a)" opacity="0.70"/><rect x="80" y="80" width="18" height="18" fill="var(--a)" opacity="0.70"/><rect x="20" y="138" width="120" height="4" fill="#fff"/></svg><div><h3>Crate 1, Chiptune</h3><p>Twinkle Twinkle, Ode to Joy, Jingle Bells, Brahms's Lullaby, Moonlight Sonata.</p></div></article>
+        <article class="crate c2"><svg viewBox="0 0 160 160" aria-hidden="true"><circle cx="80" cy="80" r="18" fill="none" stroke="var(--a)" stroke-width="2" opacity="0.48"/><circle cx="80" cy="80" r="24" fill="none" stroke="var(--a)" stroke-width="4" opacity="0.52"/><circle cx="80" cy="80" r="30" fill="none" stroke="var(--a)" stroke-width="2" opacity="0.56"/><circle cx="80" cy="80" r="36" fill="none" stroke="var(--a)" stroke-width="4" opacity="0.61"/><circle cx="80" cy="80" r="42" fill="none" stroke="var(--a)" stroke-width="2" opacity="0.65"/><circle cx="80" cy="80" r="48" fill="none" stroke="var(--a)" stroke-width="4" opacity="0.69"/><circle cx="80" cy="80" r="54" fill="none" stroke="var(--a)" stroke-width="2" opacity="0.74"/><circle cx="80" cy="80" r="60" fill="none" stroke="var(--a)" stroke-width="4" opacity="0.78"/><circle cx="80" cy="80" r="66" fill="none" stroke="var(--a)" stroke-width="2" opacity="0.82"/><circle cx="80" cy="80" r="12" fill="var(--a)"/><circle cx="80" cy="80" r="3" fill="#000"/></svg><div><h3>Crate 2, House</h3><p>Bach's Prelude in C, Minuet in G, Vivaldi's Spring, Grieg's Morning Mood, Bach's Badinerie.</p></div></article>
+        <article class="crate c3"><svg viewBox="0 0 160 160" aria-hidden="true"><circle cx="80" cy="112" r="46" fill="var(--a)"/><rect x="0" y="96" width="160" height="2" fill="#000"/><rect x="0" y="106" width="160" height="3" fill="#000"/><rect x="0" y="116" width="160" height="4" fill="#000"/><rect x="0" y="126" width="160" height="5" fill="#000"/><rect x="0" y="136" width="160" height="6" fill="#000"/><rect x="0" y="146" width="160" height="7" fill="#000"/><rect x="0" y="156" width="160" height="8" fill="#000"/><path d="M80 112L169.2 79.4" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L155.6 54.5" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L135.3 34.7" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L110.0 21.8" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L82.0 17.0" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L53.8 20.7" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L28.0 32.5" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L6.8 51.4" stroke="var(--a)" stroke-width="1.5" opacity=".6"/><path d="M80 112L-7.8 75.7" stroke="var(--a)" stroke-width="1.5" opacity=".6"/></svg><div><h3>Crate 3, Trance</h3><p>Pachelbel's Canon, Satie's Gymnopédie, The Blue Danube, Greensleeves, Swan Lake.</p></div></article>
+        <article class="crate c4"><svg viewBox="0 0 160 160" aria-hidden="true" fill="none" stroke="var(--a)" stroke-linejoin="miter"><path d="M14 40l22-14 22 14 22-14 22 14 22-14 22 14" stroke-width="6" opacity="1.00"/><path d="M14 66l22-14 22 14 22-14 22 14 22-14 22 14" stroke-width="5" opacity="0.82"/><path d="M14 92l22-14 22 14 22-14 22 14 22-14 22 14" stroke-width="4" opacity="0.64"/><path d="M14 118l22-14 22 14 22-14 22 14 22-14 22 14" stroke-width="3" opacity="0.46"/></svg><div><h3>Crate 4, Electro</h3><p>Korobeiniki, The Entertainer, Eine kleine Nachtmusik, Mozart's Symphony 40, Für Elise.</p></div></article>
+        <article class="crate c5"><svg viewBox="0 0 160 160" aria-hidden="true"><defs><clipPath id="hc"><rect x="16" y="16" width="128" height="128"/></clipPath></defs><g clip-path="url(#hc)"><path d="M-40 160L40 0h16L-24 160z" fill="var(--a)"/><path d="M-8 160L72 0h16L8 160z" fill="var(--a)"/><path d="M24 160L104 0h16L40 160z" fill="var(--a)"/><path d="M56 160L136 0h16L72 160z" fill="var(--a)"/><path d="M88 160L168 0h16L104 160z" fill="var(--a)"/><path d="M120 160L200 0h16L136 160z" fill="var(--a)"/><path d="M152 160L232 0h16L168 160z" fill="var(--a)"/><path d="M184 160L264 0h16L200 160z" fill="var(--a)"/></g><rect x="16" y="16" width="128" height="128" fill="none" stroke="#fff" stroke-width="4"/><rect x="40" y="66" width="80" height="28" fill="#000"/><text x="80" y="86" text-anchor="middle" font-size="18" font-weight="700" fill="#fff" font-family="ui-monospace,monospace">150</text></svg><div><h3>Crate 5, Hard Techno</h3><p>Beethoven's Fifth, Toccata in D minor, In the Hall of the Mountain King, Chopin's Funeral March, Rondo alla Turca.</p></div></article>
+      </div>
     </section>
 
     <section data-read aria-labelledby="try">
