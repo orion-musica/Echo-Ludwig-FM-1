@@ -379,7 +379,7 @@ try {
         if ($source -eq 'app/board/panel.c') { $options += @('-fno-lto','-fno-pic') }
         $options += @('-fwrapv','-fno-fast-math','-ffp-contract=off')
         # Storage and screen run only from control; keep audio DSP on O2.
-        if ($source -in @('app/project.c','app/transfer.c','app/samples.c','app/screen.c','app/presets.c','app/midi_router.c','app/fm_factory.c','app/fm_library.c','app/echo/echo_game.c','app/echo/echo_screen.c','app/echo/echo_fx.c','app/echo/echo_fm1.c')) { $options += '-Oz' }
+        if ($source -in @('app/project.c','app/transfer.c','app/samples.c','app/screen.c','app/presets.c','app/midi_router.c','app/fm_factory.c','app/fm_library.c')) { $options += '-Oz' }
         if ($source -eq 'app/screen.c') { $options += '-fno-inline-functions' }
         $arguments = @($options) + @('-MMD','-MF',($output + '.d'),'-c',$inputFile,'-o',$output)
         Write-Host "Compile $source"
