@@ -15,21 +15,21 @@ Three records in a crate open the next crate. Ranks: Beginner, Apprentice, Music
 
 ## Controls
 
-| FM-1 | In menus | In the game |
-| --- | --- | --- |
-| knob 1, OCT− / OCT+ | previous / next | — |
-| knob 2 | change a setting | — |
-| PLAY | select | listen again |
-| HOME | back (hold: main menu) | pause |
-| REC | repeat what Ludwig said | same |
-| EDIT | help for this place | game help |
-| ARP | rank and stars | score, round, lives |
-| SEQ | — | hint: plays the next note |
-| SCL / ENV / GLO | speech speed / how much Ludwig talks / voice | same |
-| FX | listening beat on/off | same |
-| SAVE | save progress | same |
+Simple controls (the default): every button does the same thing, so nothing has to be found by sight.
 
-Middle C is the 8th key from the left; the lowest key is F. **Key Explorer** (main menu) names every key and button.
+| On the FM-1 | What it does |
+| --- | --- |
+| any button, short press | select; in the game, listen again |
+| any button, held about 1 s | back; in the game, the pause menu (go on, hint, score, quit) |
+| any button, held 3 s | main menu |
+| a key on the left / right half | in lists: previous / next; in a choice of two: left = back or no, right = try again or yes |
+| any knob | previous / next |
+| keys, in the game | play your answer |
+
+Settings → Controls → Classic gives every button its own job: PLAY select, HOME back, REC repeat,
+EDIT help, ARP score, SEQ hint, SCL/ENV/GLO speech speed, talk, voice.
+
+Middle C is the 8th key from the left; the lowest key is F. The left half ends at the 13th key (F), the right half starts at the 14th (F sharp). **Key Explorer** (main menu) names every key and button.
 
 Every press sends a light wave over the LEDs and flashes the screen white, at most 3 flashes a second.
 Settings → Lights: off / wave / wave and flash.

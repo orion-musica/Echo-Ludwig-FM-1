@@ -66,19 +66,20 @@ int main(int argc, char **argv)
         if (release_at && t >= release_at) { in.buttons = 0; if (holding_key >= 0) in.keys = 0; holding_key = -1; release_at = 0; }
         int scr = echo_debug_screen(), want = echo_debug_expected();
         if (!release_at && t >= next_action) {
-            if (scr == 1 && step == 0) { in.buttons = 1u << B_OCT_UP; release_at = t + 60; next_action = t + 2500; step = 1; }
-            else if (scr == 1 && step == 1) { in.buttons = 1u << B_OCT_DOWN; release_at = t + 60; next_action = t + 2500; step = 2; }
-            else if (scr == 1 && step == 2) { in.buttons = 1u << B_PLAY; release_at = t + 60; next_action = t + 4000; step = 3; }
-            else if (scr == 2 && step == 3) { in.buttons = 1u << B_PLAY; release_at = t + 60; next_action = t + 3500; step = 4; }
-            else if (scr == 3 && step == 4) { in.buttons = 1u << B_OCT_UP; release_at = t + 60; next_action = t + 3500; step = 5; }
-            else if (scr == 3 && step == 5) { in.buttons = 1u << B_PLAY; release_at = t + 60; next_action = t + 500; step = 6; }
+            /* simple controls: keys on the right/left half move, any button selects, holding goes back */
+            if (scr == 1 && step == 0) { in.keys = 1u << 20; holding_key = 20; release_at = t + 80; next_action = t + 2500; step = 1; }
+            else if (scr == 1 && step == 1) { in.keys = 1u << 2; holding_key = 2; release_at = t + 80; next_action = t + 2500; step = 2; }
+            else if (scr == 1 && step == 2) { in.buttons = 1u << B_FX; release_at = t + 60; next_action = t + 6000; step = 3; }
+            else if (scr == 2 && step == 3) { in.buttons = 1u << B_SAVE; release_at = t + 60; next_action = t + 3500; step = 4; }
+            else if (scr == 3 && step == 4) { in.keys = 1u << 22; holding_key = 22; release_at = t + 80; next_action = t + 3500; step = 5; }
+            else if (scr == 3 && step == 5) { in.buttons = 1u << B_REC; release_at = t + 60; next_action = t + 500; step = 6; }
             else if (scr == 4 && want >= 0) {
                 int key = want - KEY_LOWEST_MIDI;
                 if (!wrong_once && step == 6) { key = key > 0 ? key - 1 : key + 1; wrong_once = 1; }
                 in.keys = 1u << key; holding_key = key; release_at = t + 140; next_action = t + 260;
             } else if (scr == 3 && step == 6) { printf("[%6.2fs] back in the record list - game finished\n", t / 1000.0); step = 7;
-                in.buttons = 1u << B_HOME; release_at = t + 60; next_action = t + 3000; }
-            else if (step == 7 && scr == 2) { in.buttons = 1u << B_HOME; release_at = t + 60; next_action = t + 3000; step = 8; }
+                in.buttons = 1u << B_LFO; release_at = t + 1000; next_action = t + 3000; }
+            else if (step == 7 && scr == 2) { in.buttons = 1u << B_EDIT; release_at = t + 1000; next_action = t + 3000; step = 8; }
             else if (step == 8 && scr == 1) { break; }
         }
         echo_game_tick(t, &in);

@@ -58,3 +58,5 @@ EXPORT("screen") uint32_t *w_screen(void)
     }
     return rgba;
 }
+int echo_debug_screen(void);
+EXPORT("dbg_screen") int w_dbg_screen(void) { return echo_debug_screen(); }

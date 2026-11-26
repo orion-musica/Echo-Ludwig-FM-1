@@ -11,7 +11,8 @@ enum { D_EASY, D_NORMAL, D_HARD };
 enum { SCR_BOOT, SCR_MAIN, SCR_CRATES, SCR_RECORDS, SCR_GAME, SCR_PAUSE, SCR_JAM, SCR_LIBRARY,
        SCR_EXPLORER, SCR_SETTINGS, SCR_HELP, SCR_CONFIRM };
 enum { G_INTRO, G_LISTEN, G_TURN, G_FEEDBACK, G_ROUND_OK, G_COMPLETE, G_DROP, G_OVER };
-enum { MAIN_ITEMS = 7, SETTINGS_ITEMS = 12, HELP_PAGES = 8, HOLD_MS = 900 };
+enum { MAIN_ITEMS = 7, SETTINGS_ITEMS = 13, HELP_PAGES = 8, HOLD_MS = 800, HOLD_MAIN_MS = 2500, PAUSE_ITEMS = 4 };
+enum { CTRL_SIMPLE, CTRL_CLASSIC };
 
 /* ------------------------------------------------------------ save data */
 #define SAVE_MAGIC 0x4f484345u /* "ECHO" */
@@ -20,7 +21,7 @@ typedef struct {
     uint8_t stars[ECHO_MELODIES];
     uint16_t best[ECHO_MELODIES];
     uint32_t quick_best;
-    uint8_t difficulty, voice, speed, verbosity, pan, tempo, beat, screen, music_vol, voice_vol, welcomed, lights;
+    uint8_t difficulty, voice, speed, verbosity, pan, tempo, beat, screen, music_vol, voice_vol, welcomed, lights, controls;
     uint32_t crc;
 } save_t;
 static save_t sv;
@@ -34,7 +35,7 @@ static uint32_t crc32(const uint8_t *p, unsigned n)
 static void defaults(void)
 {
     memset(&sv, 0, sizeof sv);
-    sv.magic = SAVE_MAGIC; sv.version = 1; sv.size = sizeof sv;
+    sv.magic = SAVE_MAGIC; sv.version = 2; sv.size = sizeof sv;
     sv.difficulty = D_NORMAL; sv.voice = SP_VOICE_LUDWIG; sv.speed = SP_NORMAL; sv.verbosity = V_FULL;
     sv.pan = 1; sv.tempo = 1; sv.beat = 1; sv.screen = 1; sv.music_vol = 7; sv.voice_vol = 8; sv.lights = FX_WAVE_FLASH;
 }
@@ -53,7 +54,8 @@ static void apply_settings(void)
 /* --------------------------------------------------------------- state */
 static unsigned screen, main_i, crate_i, record_i, lib_i, set_i, help_i, jam_style, explorer_home;
 static uint32_t now, prev_buttons, prev_keys, pressed, released, key_down, key_up, home_since, explorer_home_at;
-static uint8_t home_held, jam_beat, lib_count;
+static uint8_t home_held, jam_beat, lib_count, any_stage, pause_i;
+static uint32_t any_since, raw_pressed;
 static uint8_t lib_list[ECHO_MELODIES];
 static uint32_t rng = 0x2545f491u;
 static int lit_key = -1;
@@ -182,7 +184,16 @@ static int nav(const echo_input *in)
     if (pressed & (1u << B_OCT_DOWN)) --d;
     return d;
 }
+static int lowest_key(uint32_t bits);
 static int btn(unsigned b) { return (pressed >> b) & 1u; }
+static int simple(void) { return sv.controls == CTRL_SIMPLE; }
+static const char *menu_help(void) { return echo_phrases[simple() ? P_HELP_MENU : P_HELP_MENU_CLASSIC]; }
+/* Keys on the left half (F3..F4) and the right half (F#4..G5) of the keybed. */
+static int key_side(void)
+{
+    int k = lowest_key(key_down);
+    return k < 0 ? 0 : k < 13 ? -1 : 1;
+}
 static int lowest_key(uint32_t bits)
 {
     for (int k = 0; k < KEY_COUNT; ++k) if (bits & (1u << k)) return k;
@@ -220,6 +231,7 @@ static void enter_main(int title)
     char b[24], *p = u2a(b, main_i + 1); p = s2a(p, " / "); u2a(p, MAIN_ITEMS);
     show(main_icon[main_i], main_show[main_i], b);
 }
+static uint8_t crate_queue;
 static void announce_crate(void)
 {
     const echo_crate_info *c = &echo_crates[crate_i];
@@ -235,7 +247,7 @@ static void announce_crate(void)
         show(IC_LOCK, c->title, "LOCKED");
         syn_earcon(EAR_LOCKED, 0);
     }
-    say_text();
+    if (crate_queue) say_more_text(); else say_text();
 }
 static void announce_record(void)
 {
@@ -250,7 +262,14 @@ static void announce_record(void)
     show(IC_DISC, e->title, b);
     say_text();
 }
-static void enter_crates(void) { screen = SCR_CRATES; silence(); announce_crate(); }
+static void enter_crates(void)
+{
+    screen = SCR_CRATES; silence();
+    unsigned st = total_stars();
+    t_clear(); t_add("rank"); t_add(rank_say[rank_of(st)]); t_add(","); t_num(st); t_add(st == 1 ? "star." : "stars.");
+    say_text();
+    crate_queue = 1; announce_crate(); crate_queue = 0;
+}
 static void enter_records(void) { screen = SCR_RECORDS; silence(); announce_record(); }
 
 /* ----------------------------------------------------------------- game */
@@ -354,12 +373,12 @@ static void game_over(void)
     if (g.quick) {
         t_clear(); t_add(echo_phrases[P_GAME_OVER]); t_add("score"); t_num(g.score); t_add(".");
         if (g.score > sv.quick_best) { sv.quick_best = g.score; store(); t_add(echo_phrases[P_HIGH_SCORE]); }
-        t_add("press play to try again, or home to go back.");
+        t_add(echo_phrases[P_OVER_CHOICE]);
         char b[40], *p = s2a(b, "SCORE "); u2a(p, g.score);
         show(IC_CROSS, "GAME OVER", b);
         say_text();
     } else {
-        show(IC_CROSS, "SCRATCHED", "PLAY = RETRY  HOME = BACK");
+        show(IC_CROSS, "SCRATCHED", "RIGHT: RETRY  LEFT: BACK");
         say(echo_phrases[P_SCRATCHED]);
     }
 }
@@ -386,10 +405,32 @@ static void game_key(int key)
         show(IC_CROSS, g.dir > 0 ? "HIGHER" : "LOWER", "");
     }
 }
+static const char *const pause_say[PAUSE_ITEMS] = {"go on", "hint", "score", "quit"};
+static const char *const pause_show[PAUSE_ITEMS] = {"GO ON", "HINT", "SCORE", "QUIT"};
+static void announce_pause(void)
+{
+    char b[24], *p = u2a(b, pause_i + 1); p = s2a(p, " / "); u2a(p, PAUSE_ITEMS);
+    show(IC_HELP, pause_show[pause_i], b);
+    say(pause_say[pause_i]);
+}
+static void enter_pause(void)
+{
+    silence(); screen = SCR_PAUSE; pause_i = 0;
+    show(IC_HELP, "PAUSE", "GO ON");
+    say(echo_phrases[P_PAUSED]); say_more(pause_say[0]);
+}
+static void play_hint(void)
+{
+    if (sv.difficulty == D_HARD) { say(echo_phrases[P_NO_HINT]); return; }
+    ++g.hints; g.combo = 0;
+    uint8_t one[2] = {mel()->notes[g.pos * 2], 12};
+    syn_play(one, 1, 100, 0, SEQ_LEAD, 1);
+    show(IC_HELP, "HINT", "");
+}
 static void game_tick(const echo_input *in)
 {
     /* buttons that work in every phase */
-    if (btn(B_HOME)) { silence(); screen = SCR_PAUSE; show(IC_HELP, "PAUSE", "PLAY = GO ON  HOME = BACK"); say(echo_phrases[P_PAUSED]); return; }
+    if (btn(B_HOME)) { enter_pause(); return; }
     if (btn(B_ARP)) { say_status(); return; }
     (void)in;
     switch (g.phase) {
@@ -413,17 +454,10 @@ static void game_tick(const echo_input *in)
         int k = lowest_key(key_down);
         if (k >= 0) { game_key(k); break; }
         if (btn(B_PLAY)) { silence(); start_listen(); break; }
-        if (btn(B_SEQ)) {
-            if (sv.difficulty == D_HARD) { say(echo_phrases[P_NO_HINT]); break; }
-            ++g.hints; g.combo = 0;
-            uint8_t one[2] = {mel()->notes[g.pos * 2], 12};
-            syn_play(one, 1, 100, 0, SEQ_LEAD, 1);
-            show(IC_HELP, "HINT", "");
-            break;
-        }
+        if (btn(B_SEQ)) { play_hint(); break; }
         if (!g.idle_warned && now - g.turn_at > 10000u) {
             g.idle_warned = 1;
-            if (talk(V_SHORT)) say("your turn. press play to listen again.");
+            if (talk(V_SHORT)) say(simple() ? echo_phrases[P_IDLE_TURN] : "your turn. press play to listen again.");
             else syn_earcon(EAR_YOUR_TURN, 0);
         }
         break;
@@ -483,34 +517,48 @@ static void game_tick(const echo_input *in)
         else enter_records();
         break;
     }
-    case G_OVER:
-        if (btn(B_PLAY)) {
+    case G_OVER: {
+        /* two choices you can find by touch: right half = try again, left half = back */
+        int side = key_side();
+        if (btn(B_PLAY) || side > 0) {
             if (g.quick) enter_game(quick_pick(), 1);
             else enter_game(g.mel, 0);
+        } else if (side < 0) {
+            syn_earcon(EAR_BACK, 0);
+            if (g.quick) enter_main(1); else enter_records();
         }
         break;
     }
+    }
 }
-static void pause_tick(void)
+static void resume_game(void) { screen = SCR_GAME; sp_stop(); syn_earcon(EAR_ENTER, 0); }
+static void pause_tick(int d)
 {
-    if (btn(B_PLAY)) { screen = SCR_GAME; sp_stop(); start_listen(); return; }
-    if (btn(B_HOME)) { if (g.quick) enter_main(1); else enter_records(); }
+    if (d) { int n = (int)pause_i + d; pause_i = (uint8_t)wrap(n, PAUSE_ITEMS); tick_sound(pause_i, PAUSE_ITEMS, n != (int)pause_i); announce_pause(); return; }
+    if (btn(B_HOME)) { resume_game(); start_listen(); return; }   /* back = back to the game */
+    if (!btn(B_PLAY)) return;
+    switch (pause_i) {
+    case 0: resume_game(); start_listen(); break;
+    case 1: resume_game(); if (g.phase == G_TURN) play_hint(); else start_listen(); break;
+    case 2: say_status(); break;
+    default: syn_earcon(EAR_BACK, 0); if (g.quick) enter_main(1); else enter_records(); break;
+    }
 }
 
 /* ------------------------------------------------------------ settings */
 static uint8_t *setting_value(unsigned i)
 {
     uint8_t *v[SETTINGS_ITEMS] = {&sv.difficulty, &sv.voice, &sv.speed, &sv.verbosity, &sv.pan, &sv.tempo,
-                                  &sv.beat, &sv.screen, &sv.music_vol, &sv.voice_vol, &sv.lights, NULL};
+                                  &sv.beat, &sv.screen, &sv.music_vol, &sv.voice_vol, &sv.lights, &sv.controls, NULL};
     return v[i];
 }
-static const uint8_t setting_count[SETTINGS_ITEMS] = {3, 2, 4, 3, 2, 3, 2, 2, 11, 10, 3, 1};
+static const uint8_t setting_count[SETTINGS_ITEMS] = {3, 2, 4, 3, 2, 3, 2, 2, 11, 10, 3, 2, 1};
 static const char *const setting_say[SETTINGS_ITEMS] = {
     "difficulty", "voice", "speech speed", "talk", "pitch panning", "listen tempo", "beat while listening",
-    "screen", "music volume", "voice volume", "lights", "reset progress"};
+    "screen", "music volume", "voice volume", "lights", "controls", "reset progress"};
 static const char *const setting_show[SETTINGS_ITEMS] = {
     "DIFFICULTY", "VOICE", "SPEECH SPEED", "TALK", "PITCH PANNING", "LISTEN TEMPO", "LISTEN BEAT",
-    "SCREEN", "MUSIC VOLUME", "VOICE VOLUME", "LIGHTS", "RESET PROGRESS"};
+    "SCREEN", "MUSIC VOLUME", "VOICE VOLUME", "LIGHTS", "CONTROLS", "RESET PROGRESS"};
 static const char *value_name(unsigned item, unsigned v)
 {
     static const char *const names[8][4] = {
@@ -519,6 +567,7 @@ static const char *value_name(unsigned item, unsigned v)
         {"off", "minimal"}};
     static const char *const lights[3] = {"off", "wave", "wave and flash"};
     if (item == 10) return lights[v % 3];
+    if (item == 11) return v ? "classic" : "simple";
     return item < 8 ? names[item][v] : NULL;
 }
 static void announce_setting(int value_only)
@@ -537,7 +586,7 @@ static void announce_setting(int value_only)
 static void change_setting(int delta)
 {
     uint8_t *v = setting_value(set_i);
-    if (!v) { screen = SCR_CONFIRM; show(IC_LOCK, "RESET PROGRESS?", "PLAY = YES  HOME = NO"); say(echo_phrases[P_RESET_SURE]); return; }
+    if (!v) { screen = SCR_CONFIRM; show(IC_LOCK, "RESET PROGRESS?", "RIGHT: YES  LEFT: NO"); say(echo_phrases[P_RESET_SURE]); return; }
     *v = (uint8_t)wrap((int)*v + delta, setting_count[set_i]);
     apply_settings();
     store();
@@ -562,9 +611,10 @@ static void explorer_tick(void)
         say_text();
         return;
     }
+    if (simple() && btn(B_HOME)) { syn_earcon(EAR_BACK, 0); enter_main(1); return; }   /* held button */
     for (unsigned b = 0; b < B_COUNT; ++b) {
-        if (!btn(b)) continue;
-        if (b == B_HOME) {
+        if (!((simple() ? raw_pressed : pressed) & (1u << b))) continue;
+        if (!simple() && b == B_HOME) {
             if (explorer_home && now - explorer_home_at < 1500u) { enter_main(1); return; }
             explorer_home = 1; explorer_home_at = now;
         }
@@ -616,16 +666,16 @@ static void announce_help(void)
 static void screen_help(void)
 {
     switch (screen) {
-    case SCR_GAME: case SCR_PAUSE: say(echo_phrases[P_GAME_HELP]); break;
+    case SCR_GAME: case SCR_PAUSE: say(echo_phrases[simple() ? P_GAME_HELP : P_GAME_HELP_CLASSIC]); break;
     case SCR_JAM: say(echo_phrases[P_JAM_INTRO]); break;
     case SCR_EXPLORER: say(echo_phrases[P_EXPLORER_INTRO]); break;
-    default: say(echo_phrases[P_HELP_MENU]); break;
+    default: say(menu_help()); break;
     }
 }
 static int global_buttons(void)
 {
-    if (screen == SCR_EXPLORER) return 0;
-    if (btn(B_REC)) { say(said[0] ? said : echo_phrases[P_HELP_MENU]); return 1; }
+    if (screen == SCR_EXPLORER || simple()) return 0;   /* simple controls: every button is the same */
+    if (btn(B_REC)) { say(said[0] ? said : menu_help()); return 1; }
     if (btn(B_EDIT)) { screen_help(); return 1; }
     if (btn(B_SCL)) { sv.speed = (uint8_t)wrap(sv.speed + 1, 4); apply_settings(); store();
                       t_clear(); t_add("speed"); t_add(value_name(2, sv.speed)); say_text(); return 1; }
@@ -661,7 +711,7 @@ void echo_game_init(uint32_t t)
     show(IC_NOTE, "ECHO LUDWIG", "A LISTENING GAME");
     syn_earcon(EAR_UNLOCK, 0);
     say(echo_phrases[P_BOOT]);
-    if (!sv.welcomed) { say_more(echo_phrases[P_HELP_1]); say_more(echo_phrases[P_HELP_MENU]); sv.welcomed = 1; store(); }
+    if (!sv.welcomed) { say_more(echo_phrases[P_HELP_1]); say_more(menu_help()); sv.welcomed = 1; store(); }
     prev_buttons = prev_keys = 0;
 }
 
@@ -678,6 +728,24 @@ void echo_game_tick(uint32_t t, const echo_input *in)
     for (unsigned k = 0; k < KEY_COUNT; ++k) if (key_down & (1u << k)) fx_press(14u + k, now);
     fx_tick(now);
 
+    raw_pressed = pressed;
+    if (simple()) {
+        /* Simple controls: every button is the same button.
+         * short press = select (PLAY), hold = back (HOME), long hold = main menu. */
+        static uint32_t prev_any;
+        uint32_t any = in->buttons != 0;
+        pressed = 0;
+        if (any && !prev_any) { any_since = now; any_stage = 0; }
+        if (any) {
+            if (any_stage == 0 && now - any_since >= HOLD_MS) { any_stage = 1; pressed = 1u << B_HOME; syn_earcon(EAR_BACK, 0); }
+            else if (any_stage == 1 && now - any_since >= HOLD_MAIN_MS) {
+                any_stage = 2;
+                if (screen != SCR_MAIN && screen != SCR_BOOT) { enter_main(1); prev_any = any; return; }
+            }
+        } else if (prev_any && any_stage == 0) pressed = 1u << B_PLAY;
+        prev_any = any;
+        goto input_done;
+    }
     /* HOME: short press = back (handled per screen), hold = main menu */
     if (pressed & (1u << B_HOME)) { home_since = now; home_held = 0; }
     if ((in->buttons & (1u << B_HOME)) && !home_held && now - home_since >= HOLD_MS) {
@@ -689,9 +757,15 @@ void echo_game_tick(uint32_t t, const echo_input *in)
     if (pressed & (1u << B_HOME)) pressed &= ~(1u << B_HOME);
     if ((released & (1u << B_HOME)) && !home_held) pressed |= 1u << B_HOME;
     if (released & (1u << B_HOME)) home_held = 0;
-
+input_done:
     if (global_buttons()) { sp_pump(); return; }
     int d = nav(in);
+    d += in->enc[1] && screen != SCR_SETTINGS ? in->enc[1] : 0;           /* any knob moves */
+    for (unsigned e = 2; e < 6; ++e) d += in->enc[e];
+    /* keys move through lists: left half = previous, right half = next */
+    if (screen == SCR_MAIN || screen == SCR_CRATES || screen == SCR_RECORDS || screen == SCR_LIBRARY ||
+        screen == SCR_SETTINGS || screen == SCR_HELP || screen == SCR_PAUSE)
+        d += key_side();
 
     switch (screen) {
     case SCR_BOOT:
@@ -736,7 +810,7 @@ void echo_game_tick(uint32_t t, const echo_input *in)
         break;
     }
     case SCR_GAME: game_tick(in); break;
-    case SCR_PAUSE: pause_tick(); break;
+    case SCR_PAUSE: pause_tick(d); break;
     case SCR_JAM:
         if (key_up && g.key_midi >= 0 && (key_up & (1u << (g.key_midi - KEY_LOWEST_MIDI)))) { syn_note_off(); g.key_midi = -1; led_key(-1); }
         { int k = lowest_key(key_down);
@@ -765,11 +839,14 @@ void echo_game_tick(uint32_t t, const echo_input *in)
         else if (in->enc[1]) change_setting(in->enc[1] > 0 ? 1 : -1);
         else if (btn(B_HOME)) { syn_earcon(EAR_BACK, 0); enter_main(1); }
         break;
-    case SCR_CONFIRM:
-        if (btn(B_PLAY)) { uint8_t keep[12]; memcpy(keep, &sv.difficulty, 12); defaults(); memcpy(&sv.difficulty, keep, 12);
+    case SCR_CONFIRM: {
+        int side = key_side();
+        if (btn(B_PLAY)) { say(echo_phrases[P_RESET_SURE]); break; }   /* repeat the question */
+        if (side > 0) { uint8_t keep[12]; memcpy(keep, &sv.difficulty, 12); defaults(); memcpy(&sv.difficulty, keep, 12);
                            store(); say(echo_phrases[P_RESET_DONE]); screen = SCR_SETTINGS; show(IC_GEAR, "RESET PROGRESS", "DONE"); }
-        else if (btn(B_HOME)) { screen = SCR_SETTINGS; announce_setting(0); }
+        else if (side < 0 || btn(B_HOME)) { screen = SCR_SETTINGS; announce_setting(0); }
         break;
+    }
     case SCR_HELP:
         if (d) { int n = (int)help_i + d; help_i = (unsigned)wrap(n, HELP_PAGES); tick_sound(help_i, HELP_PAGES, n != (int)help_i); announce_help(); }
         else if (btn(B_PLAY)) { help_i = (help_i + 1) % HELP_PAGES; announce_help(); }

@@ -42,12 +42,11 @@ canvas{width:min(480px,92vw);aspect-ratio:1;image-rendering:pixelated;display:bl
 <table>
 <tr><td>A W S E D F T G Y H U J K O L P ; '</td><td>piano keys, C to F (like Ableton)</td></tr>
 <tr><td>Z / X</td><td>computer keyboard octave down / up (starts at middle C)</td></tr>
-<tr><td>&larr; &rarr;</td><td>previous / next (FM-1: OCT&minus; OCT+)</td></tr>
+<tr><td>&larr; &rarr;</td><td>previous / next (FM-1: any knob)</td></tr>
 <tr><td>&uarr; &darr;</td><td>change a setting value (FM-1: knob 2)</td></tr>
-<tr><td>Enter or Space</td><td>PLAY: select, start, listen again</td></tr>
-<tr><td>Esc or Backspace</td><td>HOME: back &middot; hold for main menu</td></tr>
-<tr><td>1 2 3 4 5</td><td>FX beat &middot; SCL speech speed &middot; ENV talk &middot; LFO &middot; EDIT help</td></tr>
-<tr><td>6 7 8 9 0</td><td>GLO voice &middot; SAVE &middot; ARP score &middot; SEQ hint &middot; REC repeat</td></tr>
+<tr><td>Enter, Space, 1&ndash;0</td><td>any button: select, listen again</td></tr>
+<tr><td>Esc or Backspace</td><td>hold any button: back, pause menu</td></tr>
+<tr><td>Piano letters</td><td>in lists: left half back, right half forward</td></tr>
 </table>
 </div>
 <div id="panel" aria-hidden="true"><div class="btns" id="btns"></div><div class="piano" id="piano"></div></div>
@@ -112,8 +111,9 @@ function down(e){
   if(e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key.length===1 ? e.key.toLowerCase() : e.key;
   let b = -1;
-  if(k==='Enter'||k===' ') b=B.PLAY; else if(k==='Escape'||k==='Backspace') b=B.HOME;
-  else if(k==='ArrowLeft') b=B['OCT-']; else if(k==='ArrowRight') b=B['OCT+'];
+  if(k==='Enter'||k===' ') b=B.PLAY;
+  else if(k==='Escape'||k==='Backspace'){ buttons |= 1<<B.HOME; bLatch |= 1<<B.HOME; setTimeout(()=>{ buttons &= ~(1<<B.HOME); }, 950); e.preventDefault(); return; }
+  else if(k==='ArrowLeft'){ enc0--; e.preventDefault(); return; } else if(k==='ArrowRight'){ enc0++; e.preventDefault(); return; }
   else if(k==='ArrowUp'){ enc1++; e.preventDefault(); return; } else if(k==='ArrowDown'){ enc1--; e.preventDefault(); return; }
   else if('1234567890'.includes(k)) b=[B.FX,B.SCL,B.ENV,B.LFO,B.EDIT,B.GLO,B.SAVE,B.ARP,B.SEQ,B.REC]['1234567890'.indexOf(k)];
   else if(k==='z'||k==='x'){ base = Math.max(48, Math.min(72, base + (k==='z'?-12:12))); document.getElementById('oct').textContent='kbd C'+(base/12-1); return; }

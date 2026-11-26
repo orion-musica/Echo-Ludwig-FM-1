@@ -9,7 +9,7 @@ MAIN_LIBRARY|library
 MAIN_EXPLORER|key explorer
 MAIN_SETTINGS|settings
 MAIN_HELP|help
-HELP_MENU|turn the first knob, or press the octave buttons, to choose. press play to select. press home to go back.
+HELP_MENU|turn any knob, or press a key on the left or on the right, to move. press any button to select. hold any button to go back.
 LISTEN|listen.
 YOUR_TURN|your turn.
 HIGHER|higher.
@@ -24,32 +24,32 @@ PRAISE_4|keep going!
 ALMOST|almost there.
 PERFECT|perfect!
 UNLOCKED|record unlocked!
-SCRATCHED|record scratched. press play to try again, or home to go back.
+SCRATCHED|record scratched. press a key on the right to try again, or a key on the left to go back.
 NEW_RANK|new rank.
 CRATE_UNLOCKED|new crate unlocked!
 LOCKED|locked.
 CRATE_HOW|play three records in the last crate to unlock it.
 HIGH_SCORE|new high score!
 GAME_OVER|game over.
-PAUSED|pause. press play to go on. press home again to go back.
-EXPLORER_INTRO|key explorer. press any key or button. press home two times to exit.
+PAUSED|pause.
+EXPLORER_INTRO|key explorer. press any key or button, and I tell you its name. hold any button to exit.
 LIB_EMPTY|the library is empty. unlock records to fill it.
-JAM_INTRO|jam. play the keys over the groove. turn the knob to change the style. press play to stop or start the beat.
-RESET_SURE|reset progress. are you sure? press play for yes, home for no.
+JAM_INTRO|jam. play the keys over the groove. turn a knob to change the style. press any button to stop or start the beat. hold any button to go back.
+RESET_SURE|reset progress. are you sure? press a key on the right for yes, or a key on the left for no.
 RESET_DONE|progress reset.
 SAVED|saved.
 DROP|drop!
 QUICK_INTRO|quick echo. how many records can you play? you have three lives.
 NO_HINT|no hint in hard mode.
-GAME_HELP|keys, play the melody. play, listen again. sequencer, hint. arpeggio, score. home, pause.
+GAME_HELP|play the melody on the keys. press any button to listen again. hold any button for the pause menu, with a hint and your score.
 HELP_1|echo ludwig is a listening game. you hear a short melody, then you play it back on the keys.
 HELP_2|every round, the melody grows. play the whole melody to unlock the record, and hear the drop.
 HELP_3|if you miss a note, I tell you, higher or lower.
 HELP_4|middle C is key 8 from the left. the lowest key is F.
-HELP_5|press play to listen again. press the sequencer button for a hint. press arpeggio for your score.
-HELP_6|press record to repeat what I said. press edit for help, here.
-HELP_7|press scale to change the speech speed. press envelope for more or less talk. press global to change the voice.
-HELP_8|hold home for main menu. turn the master knob for volume.
+HELP_5|you need no button by its name. any button selects, and holding any button goes back. keys on the left half and on the right half move, or choose left and right.
+HELP_6|in the game, press any button to listen again, or hold it for the pause menu, with a hint, your score, and quit.
+HELP_7|in settings, you can change the speech speed, the voice, how much I talk, and the controls. classic controls give every button its own job.
+HELP_8|hold any button for a long time to go to the main menu. turn the master knob for volume.
 BTN_0|octave down. previous.
 BTN_1|octave up. next.
 BTN_2|effects. beat on or off.
@@ -70,3 +70,7 @@ SITE_3|every round, the melody grows. play the whole melody to unlock the record
 SITE_4|I speak every menu, so you can play with no screen.
 SITE_5|this page is made for screen readers. press tab to move, and enter to select.
 SITE_6|have fun!
+HELP_MENU_CLASSIC|turn the first knob, or press the octave buttons, to choose. press play to select. press home to go back.
+GAME_HELP_CLASSIC|keys, play the melody. play, listen again. sequencer, hint. arpeggio, score. home, pause.
+IDLE_TURN|your turn. press any button to listen again.
+OVER_CHOICE|press a key on the right to try again, or a key on the left to go back.

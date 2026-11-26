@@ -320,3 +320,21 @@ apprentice AX P R EH1 N T IH0 S
 musician M Y UW0 Z IH1 SH AX N
 soloist S OW1 L OW0 IH0 S T
 maestro M AY1 S T R OW0
+need N IY1 D
+name N EY1 M
+selects S AX L EH1 K T S
+holding HH OW1 L D IH0 NG
+goes G OW1 Z
+half HH AE1 F
+job JH AA1 B
+its IH1 T S
+long L AO1 NG
+time T AY1 M
+right R AY1 T
+quit K W IH1 T
+simple S IH1 M P AX L
+classic K L AE1 S IH0 K
+controls K AX N T R OW1 L Z
+give G IH1 V
+much M AH1 CH
+own OW1 N

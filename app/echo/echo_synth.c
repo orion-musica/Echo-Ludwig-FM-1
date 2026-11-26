@@ -27,15 +27,17 @@ static unsigned seq_write;
 
 /* ------------------------------------------------------------- tables */
 static float note_hz[128];
-typedef struct { float saw, square, pulse_width, detune, cutoff, env_amount, resonance,
-                 decay_s, sustain, release_s, drive, bass_cutoff; } style_t;
+/* Lead voices: soft two-operator FM (sine carrier, sine modulator), the
+ * gentle sound of an electric piano, music box or mellow pad - no raw
+ * square or saw waves, no resonance, no distortion. */
+typedef struct { float ratio, index, index_decay_s, detune, attack_s, decay_s, sustain, release_s, tone_hz, bass_cutoff; } style_t;
 static const style_t styles[STYLE_COUNT] FM1_AUDIO_DATA = {
-    /* saw  sq   pw    det    cut   env   res   dec   sus  rel   drive bassc */
-    {0.0f, 1.0f, 0.25f, 0.000f, 9000, 0,    0.1f, 0.12f, 0.6f, 0.06f, 1.0f, 900},  /* chiptune */
-    {1.0f, 0.3f, 0.50f, 0.004f, 900,  2600, 0.5f, 0.25f, 0.5f, 0.12f, 1.0f, 500},  /* house    */
-    {1.0f, 0.0f, 0.50f, 0.011f, 1800, 3500, 0.3f, 0.40f, 0.7f, 0.30f, 1.0f, 700},  /* trance   */
-    {0.6f, 0.8f, 0.30f, 0.003f, 700,  3000, 0.8f, 0.18f, 0.4f, 0.08f, 1.4f, 600},  /* electro  */
-    {1.0f, 0.4f, 0.50f, 0.007f, 1500, 3200, 0.6f, 0.20f, 0.6f, 0.10f, 3.0f, 450},  /* hard     */
+    /* ratio index idx_dec detune  att    dec   sus   rel   tone  bassc */
+    {3.0f, 0.9f, 0.18f, 0.000f, 0.004f, 0.55f, 0.25f, 0.30f, 5200, 700},  /* chiptune: music box     */
+    {1.0f, 1.6f, 0.45f, 0.002f, 0.005f, 0.90f, 0.35f, 0.35f, 4200, 450},  /* house: electric piano   */
+    {1.0f, 0.7f, 1.20f, 0.005f, 0.018f, 1.50f, 0.70f, 0.55f, 3600, 600},  /* trance: soft pad lead   */
+    {0.5f, 1.3f, 0.25f, 0.003f, 0.006f, 0.60f, 0.35f, 0.25f, 3800, 520},  /* electro: woody pluck    */
+    {1.0f, 2.0f, 0.20f, 0.004f, 0.005f, 0.70f, 0.45f, 0.25f, 4500, 420},  /* hard techno: bright keys */
 };
 /* 16-step patterns: kick, hat, clap, bass (bit n = 16th step n). */
 static const uint16_t patterns[STYLE_COUNT][4] FM1_AUDIO_DATA = {
@@ -71,11 +73,11 @@ static float music_gain = 0.55f, voice_gain = 0.9f;
 static int pitch_pan = 1;
 static uint32_t rng = 0x9e3779b9u;
 
-typedef struct { float p1, p2, p3, hz, env, filt_low, filt_band, pan, cutoff_env; int gate, attack; uint8_t midi; } lead_t;
+typedef struct { float pc, pc2, pm, hz, env, index_env, tone, pan; int gate, attack; uint8_t midi; } lead_t;
 static lead_t lead;
 typedef struct { float phase, hz, amp, env, low; int gate; } bass_t;
 static bass_t bass;
-static float kick_phase, kick_env, kick_hz, hat_env, hat_low, clap_env, clap_time, clap_low, clap_band;
+static float kick_phase, kick_env, kick_hz, hat_env, hat_low, hat_soft, clap_env, clap_time, clap_low, clap_band;
 static float ear_phase, ear_hz, ear_env;
 static int ear_type = -1, ear_step_i, ear_param;
 static unsigned ear_left;
@@ -95,6 +97,7 @@ static inline __attribute__((always_inline)) float sine01(float p) /* p in [0,1)
 {
     float x = p * 2.0f - 1.0f;
     float y = 4.0f * x * (1.0f - (x < 0 ? -x : x));
+    y = 0.225f * (y * (y < 0 ? -y : y) - y) + y;   /* refine: close to a pure sine */
     return -y;
 }
 static inline __attribute__((always_inline)) float softclip(float x) { return x / (1.0f + (x < 0 ? -x : x)); }
@@ -104,8 +107,8 @@ static FM1_AUDIO_CODE void lead_start(unsigned midi)
     lead.midi = (uint8_t)midi;
     lead.hz = note_hz[midi & 127];
     lead.gate = 1; lead.attack = 1;
-    lead.cutoff_env = 1.0f;
-    if (lead.env < 0.05f) lead.p1 = lead.p2 = lead.p3 = 0.0f;
+    lead.index_env = 1.0f;
+    if (lead.env < 0.02f) { lead.pc = lead.pc2 = lead.pm = 0.0f; lead.env = 0.0f; }
     float pan = ((float)midi - 66.0f) / 13.0f * 0.6f;
     lead.pan = pitch_pan ? (pan > 0.7f ? 0.7f : pan < -0.7f ? -0.7f : pan) : 0.0f;
 }
@@ -185,31 +188,27 @@ static FM1_AUDIO_CODE void seq_tick(void)
 static FM1_AUDIO_CODE float lead_sample(void)
 {
     const style_t *st = &styles[style];
-    if (!lead.gate && lead.env < 0.0005f) return 0.0f;
+    if (!lead.gate && lead.env < 0.0003f) return 0.0f;
     float inc = lead.hz / FS;
-    lead.p1 += inc; if (lead.p1 >= 1.0f) lead.p1 -= 1.0f;
-    lead.p2 += inc * (1.0f + st->detune); if (lead.p2 >= 1.0f) lead.p2 -= 1.0f;
-    lead.p3 += inc * (1.0f - st->detune); if (lead.p3 >= 1.0f) lead.p3 -= 1.0f;
-    float saw = (lead.p1 * 2.0f - 1.0f);
-    if (st->detune > 0.0f) saw = (saw + (lead.p2 * 2.0f - 1.0f) + (lead.p3 * 2.0f - 1.0f)) * 0.45f;
-    float sq = lead.p1 < st->pulse_width ? 0.8f : -0.8f;
-    float x = saw * st->saw + sq * st->square;
-    /* envelope: 3 ms attack, exponential decay to sustain, then release */
+    lead.pm += inc * st->ratio; if (lead.pm >= 1.0f) lead.pm -= 1.0f;
+    float mod = sine01(lead.pm) * st->index * lead.index_env * (0.35f + 0.65f * lead.env);
+    lead.pc += inc; if (lead.pc >= 1.0f) lead.pc -= 1.0f;
+    float p = lead.pc + mod * 0.159f; p -= (float)(int)p; if (p < 0.0f) p += 1.0f;
+    float x = sine01(p);
+    if (st->detune > 0.0f) {                   /* a second, slightly detuned voice: width */
+        lead.pc2 += inc * (1.0f + st->detune); if (lead.pc2 >= 1.0f) lead.pc2 -= 1.0f;
+        float p2 = lead.pc2 + mod * 0.159f; p2 -= (float)(int)p2; if (p2 < 0.0f) p2 += 1.0f;
+        x = (x + sine01(p2)) * 0.5f;
+    }
+    /* envelope: soft attack, exponential decay to sustain, gentle release */
     if (lead.gate) {
-        if (lead.attack) { lead.env += 1.0f / (0.003f * FS); if (lead.env >= 1.0f) { lead.env = 1.0f; lead.attack = 0; } }
+        if (lead.attack) { lead.env += 1.0f / (st->attack_s * FS); if (lead.env >= 1.0f) { lead.env = 1.0f; lead.attack = 0; } }
         else lead.env += (st->sustain - lead.env) * (1.0f / (st->decay_s * FS));
-    } else lead.env -= lead.env * (4.0f / (st->release_s * FS));
-    lead.cutoff_env -= lead.cutoff_env * (1.0f / (st->decay_s * FS));
-    /* state-variable low-pass */
-    float fc = st->cutoff + st->env_amount * lead.cutoff_env;
-    float f = 2.0f * 3.14159265f * fc / FS; if (f > 0.9f) f = 0.9f;
-    float q = 1.0f - st->resonance * 0.85f;
-    lead.filt_low += f * lead.filt_band;
-    float high = x - lead.filt_low - q * lead.filt_band;
-    lead.filt_band += f * high;
-    float y = lead.filt_low;
-    if (st->drive > 1.0f) y = softclip(y * st->drive) * 1.1f;
-    return y * lead.env * 0.55f;
+    } else lead.env -= lead.env * (3.0f / (st->release_s * FS));
+    lead.index_env -= lead.index_env * (1.0f / (st->index_decay_s * FS));
+    /* one-pole low-pass rounds off whatever is left above the tone frequency */
+    lead.tone += (x - lead.tone) * (st->tone_hz * 6.2831853f / FS);
+    return lead.tone * lead.env * 0.5f;
 }
 static FM1_AUDIO_CODE float drums_bass_sample(void)
 {
@@ -218,14 +217,15 @@ static FM1_AUDIO_CODE float drums_bass_sample(void)
         kick_phase += kick_hz / FS; if (kick_phase >= 1.0f) kick_phase -= 1.0f;
         kick_hz = 45.0f + (kick_hz - 45.0f) * 0.9993f;
         float k = sine01(kick_phase) * kick_env;
-        if (style == STYLE_HARD) k = softclip(k * 4.0f) * 0.9f;
+        if (style == STYLE_HARD) k = softclip(k * 2.0f) * 1.1f;
         out += k * 0.9f;
         kick_env *= style == STYLE_HARD ? 0.99987f : 0.99982f;
     }
     if (hat_env > 0.0005f) {
         float n = rnd();
         hat_low += (n - hat_low) * 0.3f;
-        out += (n - hat_low) * hat_env * 0.22f;
+        hat_soft += ((n - hat_low) - hat_soft) * 0.45f;   /* tame the top: no hiss */
+        out += hat_soft * hat_env * 0.18f;
         hat_env *= 0.9985f;
     }
     if (clap_env > 0.0005f) {
@@ -240,7 +240,7 @@ static FM1_AUDIO_CODE float drums_bass_sample(void)
     if (bass.env > 0.0005f) {
         bass.phase += bass.hz / FS; if (bass.phase >= 1.0f) bass.phase -= 1.0f;
         float x = bass.phase * 2.0f - 1.0f;
-        float a = styles[style].bass_cutoff * 2.0f * 3.14159265f / FS;
+        float a = styles[style].bass_cutoff * 2.0f * 3.14159265f / FS;  /* round, soft bass */
         bass.low += (x - bass.low) * a * (1.0f + bass.env);
         out += bass.low * bass.env * 0.5f;
         bass.env *= bass.gate ? 0.99993f : 0.9993f;
@@ -263,7 +263,7 @@ static FM1_AUDIO_CODE float earcon_sample(void)
     if (ear_hz <= 0.0f) return 0.0f;
     const ear_step *s = &earcons[ear_type][ear_step_i];
     ear_phase += ear_hz / FS; if (ear_phase >= 1.0f) ear_phase -= 1.0f;
-    float v = s->wave == 1 ? (ear_phase < 0.5f ? 0.5f : -0.5f)
+    float v = s->wave == 1 ? sine01(ear_phase) * 0.9f + sine01(ear_phase * 2.0f - (float)(int)(ear_phase * 2.0f)) * 0.15f
             : s->wave == 2 ? sine01(ear_phase)
             : (ear_phase < 0.5f ? ear_phase * 4.0f - 1.0f : 3.0f - ear_phase * 4.0f);
     float fade = ear_left < 220 ? (float)ear_left / 220.0f : 1.0f; /* no clicks */

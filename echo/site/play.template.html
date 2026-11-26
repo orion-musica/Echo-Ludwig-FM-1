@@ -44,7 +44,7 @@
     <h1>Play Echo Ludwig</h1>
     <p class="lead">The same game, voice and sounds as on the FM-1, running in your browser. Sound on, headphones if you can.</p>
 
-    <div id="game" class="game" tabindex="-1" role="application" aria-roledescription="game" aria-label="Echo Ludwig. Ludwig speaks every menu. Piano keys A W S E D F T G Y H U J K O L P. Arrows move, Enter selects, Escape goes back, 0 repeats. Tab leaves the game.">
+    <div id="game" class="game" tabindex="-1" role="application" aria-roledescription="game" aria-label="Echo Ludwig. Ludwig speaks every menu. Piano keys A W S E D F T G Y H U J K O L P. Arrows move, Enter selects, Escape goes back. Tab leaves the game.">
       <canvas id="lcd" width="240" height="240" aria-hidden="true"></canvas>
       <button id="start">Start the game<small>Sound on. Ludwig will speak.</small></button>
     </div>
@@ -66,18 +66,12 @@
         <caption>Computer keys and the FM-1 controls they stand for</caption>
         <thead><tr><th scope="col">Computer key</th><th scope="col">FM-1</th><th scope="col">What it does</th></tr></thead>
         <tbody>
-          <tr><th scope="row">A W S E D F T G Y H U J K O L P ; '</th><td>Keys</td><td>Piano keys from C up to F, like in Ableton</td></tr>
+          <tr><th scope="row">A W S E D F T G Y H U J K O L P ; '</th><td>Keys</td><td>Play your answer. In lists, a key on the left half goes back one item and a key on the right half goes forward</td></tr>
+          <tr><th scope="row">Left and right arrows</th><td>Any knob</td><td>Previous and next item</td></tr>
+          <tr><th scope="row">Enter, Space, or any number key</th><td>Any button, short press</td><td>Select; in the game, listen again</td></tr>
+          <tr><th scope="row">Escape or Backspace</th><td>Any button, held</td><td>Back; in the game, the pause menu with hint, score and quit</td></tr>
+          <tr><th scope="row">Up and down arrows</th><td>Knob 2</td><td>Change a value in Settings</td></tr>
           <tr><th scope="row">Z and X</th><td>None</td><td>Move the computer keyboard an octave down or up</td></tr>
-          <tr><th scope="row">Left and right arrows</th><td>OCT minus, OCT plus</td><td>Previous and next item</td></tr>
-          <tr><th scope="row">Up and down arrows</th><td>Knob 2</td><td>Change a setting</td></tr>
-          <tr><th scope="row">Enter or Space</th><td>PLAY</td><td>Select; in the game, listen again</td></tr>
-          <tr><th scope="row">Escape or Backspace</th><td>HOME</td><td>Back; hold for the main menu; in the game, pause</td></tr>
-          <tr><th scope="row">0</th><td>REC</td><td>Repeat what Ludwig said</td></tr>
-          <tr><th scope="row">5</th><td>EDIT</td><td>Help for where you are</td></tr>
-          <tr><th scope="row">8</th><td>ARP</td><td>Score, or rank and stars</td></tr>
-          <tr><th scope="row">9</th><td>SEQ</td><td>Hint: plays the next note</td></tr>
-          <tr><th scope="row">1, 2, 3, 6</th><td>FX, SCL, ENV, GLO</td><td>Beat, speech speed, how much Ludwig talks, voice</td></tr>
-          <tr><th scope="row">7</th><td>SAVE</td><td>Save progress in this browser</td></tr>
           <tr><th scope="row">Tab</th><td>None</td><td>Leave the game and move on through the page</td></tr>
         </tbody>
       </table>
@@ -140,8 +134,9 @@ game.addEventListener('keydown', e => {
   if (e.repeat) { e.preventDefault(); return; }
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   let b = -1;
-  if (k === 'Enter' || k === ' ') b = B.PLAY; else if (k === 'Escape' || k === 'Backspace') b = B.HOME;
-  else if (k === 'ArrowLeft') b = B['OCT-']; else if (k === 'ArrowRight') b = B['OCT+'];
+  if (k === 'Enter' || k === ' ') b = B.PLAY;
+  else if (k === 'Escape' || k === 'Backspace') { /* back = a held button (about 1 s) */ buttons |= 1 << B.HOME; bLatch |= 1 << B.HOME; setTimeout(() => { buttons &= ~(1 << B.HOME); }, 950); e.preventDefault(); return; }
+  else if (k === 'ArrowLeft') { enc0--; e.preventDefault(); return; } else if (k === 'ArrowRight') { enc0++; e.preventDefault(); return; }
   else if (k === 'ArrowUp') { enc1++; e.preventDefault(); return; } else if (k === 'ArrowDown') { enc1--; e.preventDefault(); return; }
   else if ('1234567890'.includes(k)) b = [B.FX, B.SCL, B.ENV, B.LFO, B.EDIT, B.GLO, B.SAVE, B.ARP, B.SEQ, B.REC]['1234567890'.indexOf(k)];
   else if (k === 'z' || k === 'x') { base = Math.max(48, Math.min(72, base + (k === 'z' ? -12 : 12))); document.getElementById('oct').textContent = 'Keyboard starts at C' + (base / 12 - 1); e.preventDefault(); return; }
